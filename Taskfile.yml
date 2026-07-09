@@ -3,11 +3,18 @@
 version: '3'
 
 vars:
-  REPO_URL: {{.REPO_URL}}
+  REPO_URL: $REPO_URL
 
 tasks:
   build-cli:
     desc: Build the CLI application
     cmds:
       - go build -ldflags "-X consts.RepoURL={{.REPO_URL}}" -o bin/dsy ./apps/cli
+    silent: true
+
+  generate-slqc:
+    desc: Generate the SLQC code
+    dir: ./apps/backend
+    cmds:
+      - sqlc generate
     silent: true

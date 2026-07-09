@@ -1,9 +1,11 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var rootCmd = &cobra.Command{
@@ -20,4 +22,15 @@ func Execute() {
 }
 
 func init() {
+	viper.SetConfigName("dsyback")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(".")
+
+	viper.SetEnvPrefix("DSYBACK")
+	viper.AutomaticEnv()
+
+	if err := viper.ReadInConfig(); err != nil {
+		// Handle error reading config file
+		fmt.Printf("Error reading config file: %v\n", err)
+	}
 }

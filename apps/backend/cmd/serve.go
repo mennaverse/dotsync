@@ -3,8 +3,10 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/mennaverse/dotsync/apps/backend/consts"
 	"github.com/mennaverse/dotsync/apps/backend/web"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var serveCmd = &cobra.Command{
@@ -22,7 +24,11 @@ var serveCmd = &cobra.Command{
 }
 
 func init() {
-	serveCmd.Flags().StringP("bind", "b", "localhost:8067", "Bind address for the server")
+	serveCmd.Flags().StringP("bind", "b", consts.BindAddressDefault, "Bind address for the server")
+	serveCmd.Flags().String("server-name", consts.ServerNameDefault, "Server name for the server")
+
+	viper.BindPFlag("bind", serveCmd.Flags().Lookup("bind"))
+	viper.BindPFlag("server-name", serveCmd.Flags().Lookup("server-name"))
 
 	rootCmd.AddCommand(serveCmd)
 }

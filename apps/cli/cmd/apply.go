@@ -7,11 +7,14 @@ import (
 )
 
 var applyCmd = &cobra.Command{
-	Use:   "apply",
+	Use:   "apply [profile]",
 	Short: "Apply a specific dotfile configuration by specifying its name.",
 	Long:  ``,
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("apply called")
+		profile := args[0]
+
+		fmt.Printf("Applying profile: %s\n", profile)
 	},
 }
 
