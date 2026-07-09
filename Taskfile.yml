@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: '3'
+
+vars:
+  REPO_URL: {{.REPO_URL}}
+
+tasks:
+  build-cli:
+    desc: Build the CLI application
+    cmds:
+      - go build -ldflags "-X consts.RepoURL={{.REPO_URL}}" -o bin/dsy ./apps/cli
+    silent: true
