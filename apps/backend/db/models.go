@@ -9,114 +9,114 @@ import (
 )
 
 type CliToken struct {
-	ID         pgtype.UUID
-	UserID     pgtype.UUID
-	Token      string
-	DeviceName pgtype.Text
-	LastUsedAt pgtype.Timestamptz
-	CreatedAt  pgtype.Timestamptz
+	ID         pgtype.UUID        `json:"id"`
+	UserID     pgtype.UUID        `json:"user_id"`
+	Token      string             `json:"token"`
+	DeviceName pgtype.Text        `json:"device_name"`
+	LastUsedAt pgtype.Timestamptz `json:"last_used_at"`
+	CreatedAt  pgtype.Timestamptz `json:"created_at"`
 }
 
 type Installer struct {
-	ID          pgtype.UUID
-	UserID      pgtype.UUID
-	Name        string
-	Description pgtype.Text
-	Category    string
-	Visibility  string
-	CreatedAt   pgtype.Timestamptz
-	UpdatedAt   pgtype.Timestamptz
+	ID          pgtype.UUID        `json:"id"`
+	UserID      pgtype.UUID        `json:"user_id"`
+	Name        string             `json:"name"`
+	Description pgtype.Text        `json:"description"`
+	Category    string             `json:"category"`
+	Visibility  string             `json:"visibility"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
 }
 
 type InstallerScript struct {
-	ID                pgtype.UUID
-	InstallerID       pgtype.UUID
-	OsFamily          string
-	ShellType         string
-	PreInstallScript  pgtype.Text
-	MainInstallScript string
-	PostInstallScript pgtype.Text
-	UninstallScript   pgtype.Text
-	CreatedAt         pgtype.Timestamptz
-	UpdatedAt         pgtype.Timestamptz
+	ID                pgtype.UUID        `json:"id"`
+	InstallerID       pgtype.UUID        `json:"installer_id"`
+	OsFamily          string             `json:"os_family"`
+	ShellType         string             `json:"shell_type"`
+	PreInstallScript  pgtype.Text        `json:"pre_install_script"`
+	MainInstallScript string             `json:"main_install_script"`
+	PostInstallScript pgtype.Text        `json:"post_install_script"`
+	UninstallScript   pgtype.Text        `json:"uninstall_script"`
+	CreatedAt         pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt         pgtype.Timestamptz `json:"updated_at"`
 }
 
 type Profile struct {
-	ID          pgtype.UUID
-	UserID      pgtype.UUID
-	Name        pgtype.Text
-	Description pgtype.Text
-	Visibility  string
-	CreatedAt   pgtype.Timestamptz
-	UpdatedAt   pgtype.Timestamptz
+	ID          pgtype.UUID        `json:"id"`
+	UserID      pgtype.UUID        `json:"user_id"`
+	Name        pgtype.Text        `json:"name"`
+	Description pgtype.Text        `json:"description"`
+	Visibility  string             `json:"visibility"`
+	CreatedAt   pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt   pgtype.Timestamptz `json:"updated_at"`
 }
 
 type ProfileInstaller struct {
-	ProfileID      pgtype.UUID
-	InstallerID    pgtype.UUID
-	ExecutionOrder int32
+	ProfileID      pgtype.UUID `json:"profile_id"`
+	InstallerID    pgtype.UUID `json:"installer_id"`
+	ExecutionOrder int32       `json:"execution_order"`
 }
 
 type ProfileRepository struct {
-	ProfileID         pgtype.UUID
-	RepositoryID      pgtype.UUID
-	PreInstallScript  pgtype.Text
-	PostInstallScript pgtype.Text
-	TargetDirectory   string
-	Branch            string
+	ProfileID         pgtype.UUID `json:"profile_id"`
+	RepositoryID      pgtype.UUID `json:"repository_id"`
+	PreInstallScript  pgtype.Text `json:"pre_install_script"`
+	PostInstallScript pgtype.Text `json:"post_install_script"`
+	TargetDirectory   string      `json:"target_directory"`
+	Branch            string      `json:"branch"`
 }
 
 type Repository struct {
-	ID         pgtype.UUID
-	ProfileID  pgtype.UUID
-	RepoUrl    string
-	Branch     string
-	Visibility string
-	CreatedAt  pgtype.Timestamptz
-	UpdatedAt  pgtype.Timestamptz
+	ID         pgtype.UUID        `json:"id"`
+	ProfileID  pgtype.UUID        `json:"profile_id"`
+	RepoUrl    string             `json:"repo_url"`
+	Branch     string             `json:"branch"`
+	Visibility string             `json:"visibility"`
+	CreatedAt  pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt  pgtype.Timestamptz `json:"updated_at"`
 }
 
 type User struct {
-	ID            pgtype.UUID
-	Name          pgtype.Text
-	Username      string
-	Email         string
-	EmailVerified bool
-	PasswordHash  string
-	Banned        bool
-	CreatedAt     pgtype.Timestamptz
-	UpdatedAt     pgtype.Timestamptz
+	ID            pgtype.UUID        `json:"id"`
+	Name          pgtype.Text        `json:"name"`
+	Username      string             `json:"username"`
+	Email         string             `json:"email"`
+	EmailVerified bool               `json:"email_verified"`
+	PasswordHash  string             `json:"password_hash"`
+	Banned        bool               `json:"banned"`
+	CreatedAt     pgtype.Timestamptz `json:"created_at"`
+	UpdatedAt     pgtype.Timestamptz `json:"updated_at"`
 }
 
 type UserPasswordReset struct {
-	ID        pgtype.UUID
-	UserID    pgtype.UUID
-	TokenHash string
-	ExpiresAt pgtype.Timestamptz
-	CreatedAt pgtype.Timestamptz
+	ID        pgtype.UUID        `json:"id"`
+	UserID    pgtype.UUID        `json:"user_id"`
+	TokenHash string             `json:"token_hash"`
+	ExpiresAt pgtype.Timestamptz `json:"expires_at"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
 }
 
 type UserRefreshToken struct {
-	ID        pgtype.UUID
-	UserID    pgtype.UUID
-	TokenHash string
-	ExpiresAt pgtype.Timestamptz
-	CreatedAt pgtype.Timestamptz
+	ID        pgtype.UUID        `json:"id"`
+	UserID    pgtype.UUID        `json:"user_id"`
+	TokenHash string             `json:"token_hash"`
+	ExpiresAt pgtype.Timestamptz `json:"expires_at"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
 }
 
 type UserSession struct {
-	ID           pgtype.UUID
-	UserID       pgtype.UUID
-	SessionStart pgtype.Timestamptz
-	ExpiresAt    pgtype.Timestamptz
-	IpAddress    pgtype.Text
-	UserAgent    pgtype.Text
+	ID           pgtype.UUID        `json:"id"`
+	UserID       pgtype.UUID        `json:"user_id"`
+	SessionStart pgtype.Timestamptz `json:"session_start"`
+	ExpiresAt    pgtype.Timestamptz `json:"expires_at"`
+	IpAddress    pgtype.Text        `json:"ip_address"`
+	UserAgent    pgtype.Text        `json:"user_agent"`
 }
 
 type UserVerificationToken struct {
-	ID        pgtype.UUID
-	UserID    pgtype.UUID
-	TokenHash string
-	ExpiresAt pgtype.Timestamptz
-	CreatedAt pgtype.Timestamptz
+	ID        pgtype.UUID        `json:"id"`
+	UserID    pgtype.UUID        `json:"user_id"`
+	TokenHash string             `json:"token_hash"`
+	ExpiresAt pgtype.Timestamptz `json:"expires_at"`
+	CreatedAt pgtype.Timestamptz `json:"created_at"`
 }

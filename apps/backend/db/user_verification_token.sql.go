@@ -44,9 +44,9 @@ RETURNING id, user_id, token_hash, expires_at, created_at
 `
 
 type InsertUserVerificationTokenParams struct {
-	UserID    pgtype.UUID
-	TokenHash string
-	ExpiresAt pgtype.Timestamptz
+	UserID    pgtype.UUID        `json:"user_id"`
+	TokenHash string             `json:"token_hash"`
+	ExpiresAt pgtype.Timestamptz `json:"expires_at"`
 }
 
 func (q *Queries) InsertUserVerificationToken(ctx context.Context, arg InsertUserVerificationTokenParams) (UserVerificationToken, error) {

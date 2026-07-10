@@ -115,9 +115,9 @@ RETURNING id, name, username, email, email_verified, password_hash, banned, crea
 `
 
 type InsertUserParams struct {
-	Username     string
-	Email        string
-	PasswordHash string
+	Username     string `json:"username"`
+	Email        string `json:"email"`
+	PasswordHash string `json:"password_hash"`
 }
 
 func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) (User, error) {
@@ -149,11 +149,11 @@ WHERE id = $5
 `
 
 type UpdateUserParams struct {
-	Username      string
-	Email         string
-	EmailVerified bool
-	Banned        bool
-	ID            pgtype.UUID
+	Username      string      `json:"username"`
+	Email         string      `json:"email"`
+	EmailVerified bool        `json:"email_verified"`
+	Banned        bool        `json:"banned"`
+	ID            pgtype.UUID `json:"id"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
@@ -176,8 +176,8 @@ WHERE id = $2
 `
 
 type UpdateUserPasswordParams struct {
-	PasswordHash string
-	ID           pgtype.UUID
+	PasswordHash string      `json:"password_hash"`
+	ID           pgtype.UUID `json:"id"`
 }
 
 func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error {

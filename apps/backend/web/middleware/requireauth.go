@@ -6,10 +6,10 @@ import (
 
 	"github.com/labstack/echo/v5"
 	"github.com/mennaverse/dotsync/apps/backend/consts"
-	"github.com/mennaverse/dotsync/apps/backend/service"
+	"github.com/mennaverse/dotsync/apps/backend/manager"
 )
 
-func Auth(authService service.AuthenticationService) echo.MiddlewareFunc {
+func RequireAuth() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c *echo.Context) error {
 			authHeader := c.Request().Header.Get("Authorization")
@@ -30,11 +30,13 @@ func Auth(authService service.AuthenticationService) echo.MiddlewareFunc {
 
 			accessToken := parts[1]
 
-			ctx := c.Request().Context()
-			claims, err := authService.ValidateAccessToken(ctx, accessToken)
+			secrets := manager.NewSecretManager()
+			cryptoManager := manager.NewCryptoManager(secrets)
+
+			claims, err := cryptoManager.ParseJwtToken(accessToken)
 			if err != nil {
 				return c.JSON(http.StatusUnauthorized, map[string]any{
-					"code":  consts.HttpMissingAuthHeaderCode,
+					"code":  consts.HttpInvalidAccessTokenCode,
 					"error": "Invalid access token",
 				})
 			}
