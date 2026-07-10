@@ -1,6 +1,7 @@
 package consts
 
 const (
+	DatabaseDSNEnvVar              = "DATABASE_DSN"
 	PasswordSecretEnvVar           = "PASSWORD_SECRET"
 	EmailVerificationEnabledEnvVar = "EMAIL_VERIFICATION_ENABLED"
 	SmtpEnabledEnvVar              = "SMTP_ENABLED"

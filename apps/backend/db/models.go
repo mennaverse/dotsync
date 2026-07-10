@@ -88,6 +88,14 @@ type User struct {
 	UpdatedAt     pgtype.Timestamptz
 }
 
+type UserPasswordReset struct {
+	ID        pgtype.UUID
+	UserID    pgtype.UUID
+	TokenHash string
+	ExpiresAt pgtype.Timestamptz
+	CreatedAt pgtype.Timestamptz
+}
+
 type UserRefreshToken struct {
 	ID        pgtype.UUID
 	UserID    pgtype.UUID

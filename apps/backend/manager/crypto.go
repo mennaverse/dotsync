@@ -8,15 +8,19 @@ import (
 
 	"github.com/alexedwards/argon2id"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/mennaverse/dotsync/apps/backend/consts"
 	"github.com/mennaverse/dotsync/apps/backend/db"
+	"github.com/mennaverse/dotsync/apps/backend/dto"
 )
 
 type CryptoManager interface {
 	EncryptPassword(password string) (string, error)
 	VerifyPassword(password, hashedPassword string) (bool, error)
+	ParseJwtToken(tokenString string) (*dto.Claims, error)
 	GenerateJwtToken(user *db.User) (string, error)
 	GenerateRefreshToken() (string, string, error)
 	GenerateVerificationToken() (string, string, error)
+	GenerateResetPasswordToken() (string, string, error)
 	HashToken(token string) string
 }
 
@@ -45,6 +49,29 @@ func (c *DefaultCryptoManager) VerifyPassword(password, hashedPassword string) (
 		return false, err
 	}
 	return match, nil
+}
+
+func (c *DefaultCryptoManager) ParseJwtToken(tokenString string) (*dto.Claims, error) {
+	secret, err := c.secretManager.GetPasswordSecret()
+	if err != nil {
+		return nil, err
+	}
+
+	token, err := jwt.ParseWithClaims(tokenString, &dto.Claims{}, func(token *jwt.Token) (any, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, jwt.ErrSignatureInvalid
+		}
+		return []byte(secret), nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if claims, ok := token.Claims.(*dto.Claims); ok && token.Valid {
+		return claims, nil
+	}
+
+	return nil, consts.ErrTokenInvalid
 }
 
 func (c *DefaultCryptoManager) GenerateJwtToken(user *db.User) (string, error) {
@@ -78,6 +105,15 @@ func (c *DefaultCryptoManager) GenerateRefreshToken() (string, string, error) {
 }
 
 func (c *DefaultCryptoManager) GenerateVerificationToken() (string, string, error) {
+	rawToken, hashedToken, err := c.generateSecureToken()
+	if err != nil {
+		return "", "", err
+	}
+
+	return rawToken, hashedToken, nil
+}
+
+func (c *DefaultCryptoManager) GenerateResetPasswordToken() (string, string, error) {
 	rawToken, hashedToken, err := c.generateSecureToken()
 	if err != nil {
 		return "", "", err

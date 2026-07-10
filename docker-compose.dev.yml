@@ -6,7 +6,7 @@ services:
     container_name: dotsync-backend
     restart: on-failure:3
     environment:
-      - DSYBACK_DATABASE_URL=postgresql://dotsync_user:dotsync_password@db:5432/dotsync_db
+      - DSYBACK_DATABASE_DSN=postgresql://dotsync_user:dotsync_password@db:5432/dotsync_db
       - DSYBACK_PASSWORD_SECRET=supersecretkey
       - DSYBACK_EMAIL_VERIFICATION_ENABLED=true
       - DSYBACK_SMTP_ENABLED=true

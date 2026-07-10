@@ -1,5 +1,5 @@
 package consts
 
 var (
-	RepoURL = ""
+	DefaultRepoURL = ""
 )

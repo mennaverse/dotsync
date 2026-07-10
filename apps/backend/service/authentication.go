@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 
@@ -252,16 +254,87 @@ func (s *DefaultAuthenticationService) ResendVerificationEmail(ctx context.Conte
 }
 
 func (s *DefaultAuthenticationService) ForgotPassword(ctx context.Context, email string) error {
-	// Implement forgot password logic here
+	user, err := s.queries.GetUserByEmail(ctx, email)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil // Do not reveal that the email does not exist
+		}
+		return err
+	}
+
+	rawToken, hashedToken, err := s.cryptoManager.GenerateResetPasswordToken()
+	if err != nil {
+		return err
+	}
+
+	_ = s.queries.DeleteUserPasswordResetsByUserID(ctx, user.ID)
+
+	expiresAt := time.Now().Add(15 * time.Minute)
+	_, err = s.queries.InsertUserPasswordReset(ctx, db.InsertUserPasswordResetParams{
+		UserID:    user.ID,
+		TokenHash: hashedToken,
+		ExpiresAt: pgtype.Timestamptz{
+			Time:  expiresAt,
+			Valid: true,
+		},
+	})
+	if err != nil {
+		return err
+	}
+
+	go func() {
+		bgCtx := context.Background()
+
+		body := fmt.Sprintf(consts.EmailResetPasswordBody, rawToken, rawToken)
+		if err := s.emailManager.SendEmailResetPassword(bgCtx, user.Email, consts.EmailResetPasswordSubject, body); err != nil {
+			// Log the error, but don't return it since this is a background operation
+			fmt.Printf("Failed to send reset password email: %v\n", err)
+		}
+	}()
+
 	return nil
 }
 
-func (s *DefaultAuthenticationService) ResetPassword(ctx context.Context, token string, newPassword string) error {
-	// Implement reset password logic here
+func (s *DefaultAuthenticationService) ResetPassword(ctx context.Context, token, newPassword string) error {
+	tokenHash := s.cryptoManager.HashToken(token)
+
+	resetToken, err := s.queries.GetUserPasswordResetByTokenHash(ctx, tokenHash)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return consts.ErrResetPasswordTokenInvalid
+		}
+		return err
+	}
+
+	if time.Now().After(resetToken.ExpiresAt.Time) {
+		_ = s.queries.DeleteUserPasswordResetsByUserID(ctx, resetToken.UserID)
+		return consts.ErrResetPasswordTokenExpired
+	}
+
+	hashedPassword, err := s.cryptoManager.EncryptPassword(newPassword)
+	if err != nil {
+		return err
+	}
+
+	err = s.queries.UpdateUserPassword(ctx, db.UpdateUserPasswordParams{
+		ID:           resetToken.UserID,
+		PasswordHash: hashedPassword,
+	})
+	if err != nil {
+		return err
+	}
+
+	_ = s.queries.DeleteUserPasswordResetsByUserID(ctx, resetToken.UserID)
+	_ = s.queries.DeleteUserRefreshTokensByUserID(ctx, resetToken.UserID)
+
 	return nil
 }
 
 func (s *DefaultAuthenticationService) ValidateAccessToken(ctx context.Context, accessToken string) (*dto.Claims, error) {
-	// Implement access token validation logic here
-	return nil, nil
+	claims, err := s.cryptoManager.ParseJwtToken(accessToken)
+	if err != nil {
+		return nil, err
+	}
+
+	return claims, nil
 }

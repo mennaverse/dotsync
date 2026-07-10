@@ -167,36 +167,21 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
 	return err
 }
 
-const updateUserWithPassword = `-- name: UpdateUserWithPassword :exec
+const updateUserPassword = `-- name: UpdateUserPassword :exec
 UPDATE "user"
 SET
-    username = $1,
-    email = $2,
-    password_hash = $3,
-    email_verified = $4,
-    banned = $5,
+    password_hash = $1,
     updated_at = CURRENT_TIMESTAMP
-WHERE id = $6
+WHERE id = $2
 `
 
-type UpdateUserWithPasswordParams struct {
-	Username      string
-	Email         string
-	PasswordHash  string
-	EmailVerified bool
-	Banned        bool
-	ID            pgtype.UUID
+type UpdateUserPasswordParams struct {
+	PasswordHash string
+	ID           pgtype.UUID
 }
 
-func (q *Queries) UpdateUserWithPassword(ctx context.Context, arg UpdateUserWithPasswordParams) error {
-	_, err := q.db.Exec(ctx, updateUserWithPassword,
-		arg.Username,
-		arg.Email,
-		arg.PasswordHash,
-		arg.EmailVerified,
-		arg.Banned,
-		arg.ID,
-	)
+func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error {
+	_, err := q.db.Exec(ctx, updateUserPassword, arg.PasswordHash, arg.ID)
 	return err
 }
 

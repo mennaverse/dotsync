@@ -25,16 +25,12 @@ SET
     updated_at = CURRENT_TIMESTAMP
 WHERE id = $5;
 
--- name: UpdateUserWithPassword :exec
+-- name: UpdateUserPassword :exec
 UPDATE "user"
 SET
-    username = $1,
-    email = $2,
-    password_hash = $3,
-    email_verified = $4,
-    banned = $5,
+    password_hash = $1,
     updated_at = CURRENT_TIMESTAMP
-WHERE id = $6;
+WHERE id = $2;
 
 -- name: VerifyUserEmail :exec
 UPDATE "user"
