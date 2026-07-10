@@ -47,18 +47,28 @@ func NewAuthenticationService(queries *db.Queries, secretManager manager.SecretM
 }
 
 func (s *DefaultAuthenticationService) Register(ctx context.Context, req *dto.RegisterRequest) (*db.User, error) {
-	hashedPassword, err := s.cryptoManager.EncryptPassword(req.Password)
+	emailVerificationEnabled, err := s.secretManager.GetEmailVerificationEnabled()
+	if err != nil {
+		return nil, err
+	}
+
+	hashedPassword, err := s.cryptoManager.HashPassword(req.Password)
 	if err != nil {
 		return nil, err
 	}
 
 	user, err := s.queries.InsertUser(ctx, db.InsertUserParams{
-		Username:     req.Username,
-		Email:        req.Email,
-		PasswordHash: hashedPassword,
+		Username:      req.Username,
+		Email:         req.Email,
+		EmailVerified: !emailVerificationEnabled,
+		PasswordHash:  hashedPassword,
 	})
 	if err != nil {
 		return nil, err
+	}
+
+	if !user.EmailVerified {
+		s.ResendVerificationEmail(ctx, user.Email)
 	}
 
 	return &user, nil
@@ -243,7 +253,16 @@ func (s *DefaultAuthenticationService) ResendVerificationEmail(ctx context.Conte
 	go func() {
 		bgCtx := context.Background()
 
-		body := fmt.Sprintf(consts.EmailVerificationBody, rawToken, rawToken)
+		frontendURL, err := s.secretManager.GetFrontendURL()
+		if err != nil {
+			// Log the error, but don't return it since this is a background operation
+			fmt.Printf("Failed to get frontend URL: %v\n", err)
+			return
+		}
+
+		verificationLink := fmt.Sprintf("%s/verify-email?token=%s", frontendURL, rawToken)
+
+		body := fmt.Sprintf(consts.EmailVerificationBody, verificationLink, verificationLink)
 		if err := s.emailManager.SendEmailVerification(bgCtx, user.Email, consts.EmailVerificationSubject, body); err != nil {
 			// Log the error, but don't return it since this is a background operation
 			fmt.Printf("Failed to send verification email: %v\n", err)
@@ -311,7 +330,7 @@ func (s *DefaultAuthenticationService) ResetPassword(ctx context.Context, token,
 		return consts.ErrResetPasswordTokenExpired
 	}
 
-	hashedPassword, err := s.cryptoManager.EncryptPassword(newPassword)
+	hashedPassword, err := s.cryptoManager.HashPassword(newPassword)
 	if err != nil {
 		return err
 	}

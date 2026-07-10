@@ -13,8 +13,14 @@ tasks:
     silent: true
 
   generate-slqc:
-    desc: Generate the SLQC code
+    desc: Generate the SQLc code
     dir: ./apps/backend
     cmds:
       - sqlc generate
+    silent: true
+
+  run-dev-detached:
+    desc: Run the development environment detached using podman compose
+    cmds:
+      - podman compose -f docker-compose.dev.yml up -d --build
     silent: true

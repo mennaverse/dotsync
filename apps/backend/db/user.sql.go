@@ -109,19 +109,25 @@ func (q *Queries) GetUserByUsernameOrEmail(ctx context.Context, username string)
 }
 
 const insertUser = `-- name: InsertUser :one
-INSERT INTO "user" (username, email, password_hash)
-VALUES ($1, $2, $3)
+INSERT INTO "user" (username, email, email_verified, password_hash)
+VALUES ($1, $2, $3, $4)
 RETURNING id, name, username, email, email_verified, password_hash, banned, created_at, updated_at
 `
 
 type InsertUserParams struct {
-	Username     string `json:"username"`
-	Email        string `json:"email"`
-	PasswordHash string `json:"password_hash"`
+	Username      string
+	Email         string
+	EmailVerified bool
+	PasswordHash  string
 }
 
 func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) (User, error) {
-	row := q.db.QueryRow(ctx, insertUser, arg.Username, arg.Email, arg.PasswordHash)
+	row := q.db.QueryRow(ctx, insertUser,
+		arg.Username,
+		arg.Email,
+		arg.EmailVerified,
+		arg.PasswordHash,
+	)
 	var i User
 	err := row.Scan(
 		&i.ID,
@@ -149,11 +155,11 @@ WHERE id = $5
 `
 
 type UpdateUserParams struct {
-	Username      string      `json:"username"`
-	Email         string      `json:"email"`
-	EmailVerified bool        `json:"email_verified"`
-	Banned        bool        `json:"banned"`
-	ID            pgtype.UUID `json:"id"`
+	Username      string
+	Email         string
+	EmailVerified bool
+	Banned        bool
+	ID            pgtype.UUID
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
@@ -176,8 +182,8 @@ WHERE id = $2
 `
 
 type UpdateUserPasswordParams struct {
-	PasswordHash string      `json:"password_hash"`
-	ID           pgtype.UUID `json:"id"`
+	PasswordHash string
+	ID           pgtype.UUID
 }
 
 func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error {

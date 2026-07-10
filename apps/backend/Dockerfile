@@ -14,6 +14,11 @@ FROM alpine:latest
 
 WORKDIR /app
 
-COPY --from=builder /app/dotsync-backend .
+COPY --from=builder /app/dotsync-backend ./
 
-CMD ["./dotsync-backend", "serve"]
+COPY --from=builder /app/migrations /app/migrations
+COPY --from=builder /app/seeders /app/seeders
+
+EXPOSE 8067
+
+CMD ["./dotsync-backend", "serve", "-b", "0.0.0.0:8067"]

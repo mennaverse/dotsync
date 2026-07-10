@@ -1,6 +1,7 @@
 package consts
 
 const (
+	FrontendURLEnvVar              = "FRONTEND_URL"
 	DatabaseDSNEnvVar              = "DATABASE_DSN"
 	PasswordSecretEnvVar           = "PASSWORD_SECRET"
 	EmailVerificationEnabledEnvVar = "EMAIL_VERIFICATION_ENABLED"

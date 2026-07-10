@@ -53,9 +53,9 @@ RETURNING id, user_id, token_hash, expires_at, created_at
 `
 
 type InsertUserRefreshTokenParams struct {
-	UserID    pgtype.UUID        `json:"user_id"`
-	TokenHash string             `json:"token_hash"`
-	ExpiresAt pgtype.Timestamptz `json:"expires_at"`
+	UserID    pgtype.UUID
+	TokenHash string
+	ExpiresAt pgtype.Timestamptz
 }
 
 func (q *Queries) InsertUserRefreshToken(ctx context.Context, arg InsertUserRefreshTokenParams) (UserRefreshToken, error) {

@@ -1,3 +1,4 @@
+-- +goose Up
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE
@@ -11,16 +12,6 @@ CREATE TABLE
         banned BOOLEAN DEFAULT FALSE NOT NULL,
         created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
-    );
-
-CREATE TABLE
-    "user_session" (
-        id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
-        user_id UUID REFERENCES "user" (id) ON DELETE CASCADE,
-        session_start TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-        expires_at TIMESTAMPTZ NOT NULL,
-        ip_address TEXT,
-        user_agent TEXT
     );
 
 CREATE TABLE
@@ -127,3 +118,16 @@ CREATE TABLE
         last_used_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
         created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
     );
+
+-- +goose Down
+DROP TABLE IF EXISTS "cli_token";
+DROP TABLE IF EXISTS "profile_repository";
+DROP TABLE IF EXISTS "repository";
+DROP TABLE IF EXISTS "profile_installer";
+DROP TABLE IF EXISTS "installer_script";
+DROP TABLE IF EXISTS "installer";
+DROP TABLE IF EXISTS "profile";
+DROP TABLE IF EXISTS "user_password_reset";
+DROP TABLE IF EXISTS "user_verification_token";
+DROP TABLE IF EXISTS "user_refresh_token";
+DROP TABLE IF EXISTS "user";

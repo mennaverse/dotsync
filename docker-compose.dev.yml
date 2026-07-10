@@ -6,16 +6,17 @@ services:
     container_name: dotsync-backend
     restart: on-failure:3
     environment:
+      - DSYBACK_FRONTEND_URL=http://localhost:5173
       - DSYBACK_DATABASE_DSN=postgresql://dotsync_user:dotsync_password@db:5432/dotsync_db
       - DSYBACK_PASSWORD_SECRET=supersecretkey
       - DSYBACK_EMAIL_VERIFICATION_ENABLED=true
       - DSYBACK_SMTP_ENABLED=true
       - DSYBACK_SMTP_HOST=mailpit
       - DSYBACK_SMTP_PORT=1025
-      - DSYBACK_SMTP_USER=dotsync_user
+      - DSYBACK_SMTP_USER=dotsync_user@dotsync.site
       - DSYBACK_SMTP_PASSWORD=dotsync_password
     ports:
-      - "8067:8067"
+      - 8067:8067
     depends_on:
       - db
 
@@ -23,19 +24,21 @@ services:
     image: postgres:18-alpine
     container_name: dotsync-db
     restart: unless-stopped
+    volumes:
+      - dsy_db_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: dotsync_user
       POSTGRES_PASSWORD: dotsync_password
       POSTGRES_DB: dotsync_db
     ports:
-      - "5432:5432"
+      - 5432:5432
 
   mailpit:
     image: axllent/mailpit
     container_name: mailpit
     restart: unless-stopped
     volumes:
-      - ./data:/data
+      - dsy_mailpit_data:/data
     ports:
       - 8025:8025
       - 1025:1025
@@ -44,3 +47,8 @@ services:
       - MP_DATABASE=/data/mailpit.db
       - MP_SMTP_AUTH_ACCEPT_ANY=1
       - MP_SMTP_AUTH_ALLOW_INSECURE=1
+
+
+volumes:
+  dsy_db_data:
+  dsy_mailpit_data:

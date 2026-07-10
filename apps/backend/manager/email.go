@@ -61,9 +61,9 @@ func (e *DefaultEmailManager) SendEmail(ctx context.Context, to string, subject 
 	client, err := mail.NewClient(
 		c.SMTPHost,
 		mail.WithPort(c.SMTPPort),
-		mail.WithSMTPAuth(mail.SMTPAuthAutoDiscover),
 		mail.WithUsername(c.SMTPUsername),
 		mail.WithPassword(c.SMTPPassword),
+		mail.WithTLSPolicy(mail.TLSOpportunistic),
 	)
 	if err != nil {
 		return err

@@ -14,7 +14,7 @@ import (
 )
 
 type CryptoManager interface {
-	EncryptPassword(password string) (string, error)
+	HashPassword(password string) (string, error)
 	VerifyPassword(password, hashedPassword string) (bool, error)
 	ParseJwtToken(tokenString string) (*dto.Claims, error)
 	GenerateJwtToken(user *db.User) (string, error)
@@ -35,7 +35,7 @@ func NewCryptoManager(secretManager SecretManager) CryptoManager {
 	}
 }
 
-func (c *DefaultCryptoManager) EncryptPassword(password string) (string, error) {
+func (c *DefaultCryptoManager) HashPassword(password string) (string, error) {
 	hashedPassword, err := argon2id.CreateHash(password, argon2id.DefaultParams)
 	if err != nil {
 		return "", err

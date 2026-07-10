@@ -9,6 +9,7 @@ import (
 )
 
 type SecretManager interface {
+	GetFrontendURL() (string, error)
 	GetDatabaseDSN() (string, error)
 	GetEmailVerificationEnabled() (bool, error)
 	GetSmtpEnabled() (bool, error)
@@ -26,6 +27,16 @@ type DefaultSecretManager struct {
 func NewSecretManager() SecretManager {
 	return &DefaultSecretManager{}
 }
+
+func (s *DefaultSecretManager) GetFrontendURL() (string, error) {
+	secret := viper.Get(consts.FrontendURLEnvVar)
+	if secret == nil {
+		return "", os.ErrNotExist
+	}
+
+	return secret.(string), nil
+}
+
 func (s *DefaultSecretManager) GetDatabaseDSN() (string, error) {
 	secret := viper.Get(consts.DatabaseDSNEnvVar)
 	if secret == nil {

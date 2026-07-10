@@ -11,8 +11,8 @@ SELECT * FROM "user" WHERE username = $1 LIMIT 1;
 SELECT * FROM "user" WHERE username = $1 OR email = $1 LIMIT 1;
 
 -- name: InsertUser :one
-INSERT INTO "user" (username, email, password_hash)
-VALUES ($1, $2, $3)
+INSERT INTO "user" (username, email, email_verified, password_hash)
+VALUES ($1, $2, $3, $4)
 RETURNING *;
 
 -- name: UpdateUser :exec
