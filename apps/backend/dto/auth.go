@@ -1,13 +1,7 @@
-package auth
+package dto
 
 import (
-	"errors"
-)
-
-var (
-	ErrUserBanned         = errors.New("User is banned")
-	ErrInvalidCredentials = errors.New("Invalid credentials")
-	ErrUserNotFound       = errors.New("User not found")
+	"time"
 )
 
 type RegisterRequest struct {
@@ -19,6 +13,12 @@ type RegisterRequest struct {
 type LoginRequest struct {
 	Login    string `json:"login"`
 	Password string `json:"password"`
+}
+
+type TokenPair struct {
+	AccessToken  string    `json:"access_token"`
+	RefreshToken string    `json:"refresh_token,omitempty"`
+	ExpiresAt    time.Time `json:"expires_at"`
 }
 
 type Claims struct {

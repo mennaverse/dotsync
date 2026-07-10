@@ -6,11 +6,39 @@ CREATE TABLE
         name VARCHAR(255),
         username VARCHAR(255) NOT NULL UNIQUE,
         email VARCHAR(255) NOT NULL UNIQUE,
-        email_verified BOOLEAN DEFAULT FALSE,
+        email_verified BOOLEAN DEFAULT FALSE NOT NULL,
         password_hash VARCHAR(255) NOT NULL,
         banned BOOLEAN DEFAULT FALSE NOT NULL,
         created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+    );
+
+CREATE TABLE
+    "user_session" (
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
+        user_id UUID REFERENCES "user" (id) ON DELETE CASCADE,
+        session_start TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        expires_at TIMESTAMPTZ NOT NULL,
+        ip_address TEXT,
+        user_agent TEXT
+    );
+
+CREATE TABLE
+    "user_refresh_token" (
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
+        user_id UUID REFERENCES "user" (id) ON DELETE CASCADE,
+        token_hash VARCHAR(64) NOT NULL UNIQUE,
+        expires_at TIMESTAMPTZ NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+    );
+
+CREATE TABLE
+    "user_verification_token" (
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
+        user_id UUID REFERENCES "user" (id) ON DELETE CASCADE,
+        token_hash VARCHAR(255) NOT NULL UNIQUE,
+        expires_at TIMESTAMPTZ NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
     );
 
 CREATE TABLE
@@ -74,6 +102,8 @@ CREATE TABLE
     "profile_repository" (
         profile_id UUID REFERENCES "profile" (id) ON DELETE CASCADE,
         repository_id UUID REFERENCES "repository" (id) ON DELETE CASCADE,
+        pre_install_script TEXT,
+        post_install_script TEXT,
         target_directory TEXT NOT NULL,
         branch VARCHAR(50) DEFAULT 'main' NOT NULL,
         PRIMARY KEY (profile_id, repository_id)
