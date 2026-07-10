@@ -5,7 +5,11 @@ info:
 
 http:
   method: POST
-  url: "{{baseUrl}}/auth/verify-email"
+  url: "{{baseUrl}}/auth/verify-email?token="
+  params:
+    - name: token
+      value: ""
+      type: query
   auth: inherit
 
 settings:

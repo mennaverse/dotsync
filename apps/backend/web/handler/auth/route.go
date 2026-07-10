@@ -48,7 +48,6 @@ func RegisterRoutes(e *echo.Group) {
 		resendVerificationEmailHandler,
 		middleware.RateLimiter,
 		middleware.Services(),
-		middleware.RequireAuth(),
 	)
 
 	e.POST(

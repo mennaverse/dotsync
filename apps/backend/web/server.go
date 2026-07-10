@@ -36,8 +36,14 @@ func (cv *customValidator) Validate(i any) error {
 }
 
 func errorHandler(c *echo.Context, err error) {
-	errString := fmt.Sprintf("Error: %s", err.Error())
-	c.Logger().Error(errString)
+	if appErr, ok := errors.AsType[*types.AppError](err); ok {
+		c.Logger().Error(appErr.Error())
+		c.JSON(appErr.StatusCode, map[string]any{
+			"code":    appErr.StatusCode,
+			"message": appErr.Message,
+		})
+		return
+	}
 
 	if resp, uErr := echo.UnwrapResponse(c.Response()); uErr == nil {
 		if resp.Committed {

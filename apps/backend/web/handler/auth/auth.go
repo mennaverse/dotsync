@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/labstack/echo/v5"
@@ -24,6 +25,9 @@ func registerHandler(c *echo.Context) error {
 
 	user, err := services.Authentication.Register(ctx, req)
 	if err != nil {
+		if errors.Is(err, consts.ErrEmailOrUsernameAlreadyExists) {
+			return types.NewAppError(http.StatusConflict, "E-mail or username already exists", err)
+		}
 		return err
 	}
 
@@ -110,8 +114,8 @@ func verifyEmailHandler(c *echo.Context) error {
 
 	if token == "" {
 		return c.JSON(http.StatusBadRequest, types.JsonResponse{
-			"code":  consts.ErrHttpMissingTokenCode,
-			"error": "Missing token in query parameters.",
+			"code":    consts.HttpMissingTokenCode,
+			"message": "Missing token in query parameters.",
 		})
 	}
 
@@ -179,8 +183,8 @@ func resetPasswordHandler(c *echo.Context) error {
 
 	if token == "" {
 		return c.JSON(http.StatusBadRequest, types.JsonResponse{
-			"code":  consts.ErrHttpMissingTokenCode,
-			"error": "Missing token in query parameters.",
+			"code":    consts.HttpMissingTokenCode,
+			"message": "Missing token in query parameters.",
 		})
 	}
 

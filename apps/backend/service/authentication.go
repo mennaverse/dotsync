@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/mennaverse/dotsync/apps/backend/consts"
 	"github.com/mennaverse/dotsync/apps/backend/db"
@@ -64,6 +65,12 @@ func (s *DefaultAuthenticationService) Register(ctx context.Context, req *dto.Re
 		PasswordHash:  hashedPassword,
 	})
 	if err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			if pgErr.Code == "23505" { // unique_violation
+				return nil, consts.ErrEmailOrUsernameAlreadyExists
+			}
+		}
 		return nil, err
 	}
 
@@ -304,7 +311,16 @@ func (s *DefaultAuthenticationService) ForgotPassword(ctx context.Context, email
 	go func() {
 		bgCtx := context.Background()
 
-		body := fmt.Sprintf(consts.EmailResetPasswordBody, rawToken, rawToken)
+		frontendURL, err := s.secretManager.GetFrontendURL()
+		if err != nil {
+			// Log the error, but don't return it since this is a background operation
+			fmt.Printf("Failed to get frontend URL: %v\n", err)
+			return
+		}
+
+		resetPasswordLink := fmt.Sprintf("%s/reset-password?token=%s", frontendURL, rawToken)
+
+		body := fmt.Sprintf(consts.EmailResetPasswordBody, resetPasswordLink, resetPasswordLink)
 		if err := s.emailManager.SendEmailResetPassword(bgCtx, user.Email, consts.EmailResetPasswordSubject, body); err != nil {
 			// Log the error, but don't return it since this is a background operation
 			fmt.Printf("Failed to send reset password email: %v\n", err)

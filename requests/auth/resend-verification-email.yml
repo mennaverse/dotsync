@@ -6,6 +6,12 @@ info:
 http:
   method: POST
   url: "{{baseUrl}}/auth/resend-verification-email"
+  body:
+    type: json
+    data: |-
+      {
+        "email": "admin@dotsync.site"
+      }
   auth: inherit
 
 settings:

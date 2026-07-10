@@ -16,6 +16,7 @@ func RequireAuth() echo.MiddlewareFunc {
 			services := c.Get(consts.ServicesContextKey).(*service.Services)
 			ctx := c.Request().Context()
 			var accessToken string
+			var refreshToken string
 			isFromCookie := false
 
 			cookie, err := c.Cookie(consts.AccessTokenCookieName)
@@ -37,36 +38,34 @@ func RequireAuth() echo.MiddlewareFunc {
 
 			if accessToken == "" {
 				return c.JSON(http.StatusUnauthorized, map[string]any{
-					"code":  consts.HttpMissingAuthHeaderCode,
-					"error": "Missing access token in cookie or Authorization header",
+					"code":    consts.HttpMissingAuthHeaderCode,
+					"message": "Missing access token in cookie or Authorization header",
 				})
+			}
+
+			if isFromCookie {
+				refreshCookie, err := c.Cookie(consts.RefreshTokenCookieName)
+				if err == nil {
+					refreshToken = refreshCookie.Value
+				}
+			} else {
+				refreshToken = c.Request().Header.Get("X-Refresh-Token")
 			}
 
 			claims, err := services.Authentication.ValidateAccessToken(ctx, accessToken)
 			if err != nil && errors.Is(err, consts.ErrTokenInvalid) {
-				var refreshToken string
-
-				if isFromCookie {
-					refreshCookie, err := c.Cookie(consts.RefreshTokenCookieName)
-					if err == nil {
-						refreshToken = refreshCookie.Value
-					}
-				} else {
-					refreshToken = c.Request().Header.Get("X-Refresh-Token")
-				}
-
 				if refreshToken == "" {
 					return c.JSON(http.StatusUnauthorized, map[string]any{
-						"code":  consts.HttpInvalidAccessTokenCode,
-						"error": "Invalid access token and missing refresh token",
+						"code":    consts.HttpInvalidAccessTokenCode,
+						"message": "Invalid access token and missing refresh token",
 					})
 				}
 
 				newTokens, err := services.Authentication.RefreshToken(ctx, refreshToken)
 				if err != nil {
 					return c.JSON(http.StatusUnauthorized, map[string]any{
-						"code":  consts.ErrHttpInvalidRefreshTokenCode,
-						"error": "Invalid refresh token",
+						"code":    consts.HttpInvalidRefreshTokenCode,
+						"message": "Invalid refresh token",
 					})
 				}
 				// Set the new access token in the cookie if it was from the cookie
@@ -92,19 +91,18 @@ func RequireAuth() echo.MiddlewareFunc {
 				claims, err = services.Authentication.ValidateAccessToken(ctx, newTokens.AccessToken)
 				if err != nil {
 					return c.JSON(http.StatusUnauthorized, map[string]any{
-						"code":  consts.HttpInvalidAccessTokenCode,
-						"error": "Invalid access token after refresh",
+						"code":    consts.HttpInvalidAccessTokenCode,
+						"message": "Invalid access token after refresh",
 					})
 				}
-
-				c.Set(consts.UserRefreshTokenContextKey, newTokens.RefreshToken)
 			} else if err != nil {
 				return c.JSON(http.StatusUnauthorized, map[string]any{
-					"code":  consts.HttpInvalidAccessTokenCode,
-					"error": "Invalid access token",
+					"code":    consts.HttpInvalidAccessTokenCode,
+					"message": "Invalid access token",
 				})
 			}
 
+			c.Set(consts.UserRefreshTokenContextKey, refreshToken)
 			c.Set(consts.UserClaimsContextKey, claims)
 
 			return next(c)
