@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v5"
+	"github.com/labstack/echo/v5/middleware"
 	"github.com/mennaverse/dotsync/apps/backend/web/handler"
 	"github.com/mennaverse/dotsync/apps/backend/web/handler/types"
 )
@@ -15,6 +16,8 @@ func StartServer(bindAddress string) error {
 	e := echo.New()
 	e.HTTPErrorHandler = errorHandler
 	e.Validator = &customValidator{validator: validator.New()}
+
+	e.Use(middleware.BodyLimit(middleware.KB * 1024 * 5)) // 5MB
 
 	handler.RegisterRoutes(e)
 

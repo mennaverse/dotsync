@@ -1,4 +1,15 @@
 services:
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile
+    container_name: dotsync-frontend
+    restart: unless-stopped
+    ports:
+      - 80:80
+    depends_on:
+      - backend
+
   backend:
     build:
       context: ./apps/backend
@@ -20,5 +31,3 @@ services:
       POSTGRES_USER: dotsync_user
       POSTGRES_PASSWORD: dotsync_password
       POSTGRES_DB: dotsync_db
-    ports:
-      - 5432:5432
