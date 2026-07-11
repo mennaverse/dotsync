@@ -1,24 +1,19 @@
-import { HomePage } from "@/components/home-page";
-import { LandingPage } from "@/components/landing-page";
-import { MainShell } from "@/components/main-shell";
-import { useCurrentUser } from "@/hooks/use-current-user";
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { useDocumentTitle } from "usehooks-ts";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const { data: currentUser, isLoading } = useCurrentUser();
-  const component = useMemo(
-    () => (currentUser ? <HomePage /> : <LandingPage />),
-    [currentUser],
+  const { t } = useTranslation();
+  useDocumentTitle(t("title"));
+
+  return (
+    <div className="container">
+      <h1>Welcome to the Landing Page</h1>
+      <p>This is the landing page of our application.</p>
+    </div>
   );
-
-  if (isLoading) {
-    return <MainShell></MainShell>;
-  }
-
-  return <MainShell>{component}</MainShell>;
 }

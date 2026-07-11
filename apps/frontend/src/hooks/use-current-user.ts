@@ -5,6 +5,8 @@ export function useCurrentUser() {
   return useQuery({
     retry: false,
     queryKey: ["user", "current"],
-    queryFn: AuthService.getCurrentUser,
+    queryFn: async () => {
+      return (await AuthService.getCurrentUser()).data;
+    },
   });
 }

@@ -1,4 +1,3 @@
-import { MainShell } from "@/components/main-shell";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/search")({
@@ -6,14 +5,6 @@ export const Route = createFileRoute("/search")({
 });
 
 function RouteComponent() {
-  return (
-    <MainShell>
-      <SearchPage />
-    </MainShell>
-  );
-}
-
-function SearchPage() {
   return (
     <div className="container">
       <h1>Search Page</h1>

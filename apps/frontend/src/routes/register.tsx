@@ -1,18 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/about")({
+export const Route = createFileRoute("/register")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  return <AboutPage />;
-}
-
-function AboutPage() {
   return (
     <div className="container">
-      <h1>About Page</h1>
-      <p>This is the about page of our application.</p>
+      <h1>Register Page</h1>
+      <p>This is the register page of our application.</p>
     </div>
   );
 }

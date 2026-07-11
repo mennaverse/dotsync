@@ -3,6 +3,7 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import { formDevtoolsPlugin } from "@tanstack/react-form-devtools";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { MainShell } from "@/components/main-shell";
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -11,7 +12,9 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <>
-      <Outlet />
+      <MainShell>
+        <Outlet />
+      </MainShell>
 
       <ReactQueryDevtools />
       <TanStackRouterDevtools />
