@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from "./routes/__root"
+import { Route as VerifyEmailRouteImport } from "./routes/verify-email"
 import { Route as SearchRouteImport } from "./routes/search"
 import { Route as RegisterRouteImport } from "./routes/register"
 import { Route as LogoutRouteImport } from "./routes/logout"
@@ -19,6 +20,11 @@ import { Route as IndexRouteImport } from "./routes/index"
 import { Route as ProfileUsernameRouteImport } from "./routes/profile/$username"
 import { Route as ProfileUsernameRepositoriesRouteImport } from "./routes/profile/$username/repositories"
 
+const VerifyEmailRoute = VerifyEmailRouteImport.update({
+  id: "/verify-email",
+  path: "/verify-email",
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SearchRoute = SearchRouteImport.update({
   id: "/search",
   path: "/search",
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   "/logout": typeof LogoutRoute
   "/register": typeof RegisterRoute
   "/search": typeof SearchRoute
+  "/verify-email": typeof VerifyEmailRoute
   "/profile/$username": typeof ProfileUsernameRouteWithChildren
   "/profile/$username/repositories": typeof ProfileUsernameRepositoriesRoute
 }
@@ -85,6 +92,7 @@ export interface FileRoutesByTo {
   "/logout": typeof LogoutRoute
   "/register": typeof RegisterRoute
   "/search": typeof SearchRoute
+  "/verify-email": typeof VerifyEmailRoute
   "/profile/$username": typeof ProfileUsernameRouteWithChildren
   "/profile/$username/repositories": typeof ProfileUsernameRepositoriesRoute
 }
@@ -97,6 +105,7 @@ export interface FileRoutesById {
   "/logout": typeof LogoutRoute
   "/register": typeof RegisterRoute
   "/search": typeof SearchRoute
+  "/verify-email": typeof VerifyEmailRoute
   "/profile/$username": typeof ProfileUsernameRouteWithChildren
   "/profile/$username/repositories": typeof ProfileUsernameRepositoriesRoute
 }
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
     | "/logout"
     | "/register"
     | "/search"
+    | "/verify-email"
     | "/profile/$username"
     | "/profile/$username/repositories"
   fileRoutesByTo: FileRoutesByTo
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
     | "/logout"
     | "/register"
     | "/search"
+    | "/verify-email"
     | "/profile/$username"
     | "/profile/$username/repositories"
   id:
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | "/logout"
     | "/register"
     | "/search"
+    | "/verify-email"
     | "/profile/$username"
     | "/profile/$username/repositories"
   fileRoutesById: FileRoutesById
@@ -144,11 +156,19 @@ export interface RootRouteChildren {
   LogoutRoute: typeof LogoutRoute
   RegisterRoute: typeof RegisterRoute
   SearchRoute: typeof SearchRoute
+  VerifyEmailRoute: typeof VerifyEmailRoute
   ProfileUsernameRoute: typeof ProfileUsernameRouteWithChildren
 }
 
 declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
+    "/verify-email": {
+      id: "/verify-email"
+      path: "/verify-email"
+      fullPath: "/verify-email"
+      preLoaderRoute: typeof VerifyEmailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     "/search": {
       id: "/search"
       path: "/search"
@@ -235,6 +255,7 @@ const rootRouteChildren: RootRouteChildren = {
   LogoutRoute: LogoutRoute,
   RegisterRoute: RegisterRoute,
   SearchRoute: SearchRoute,
+  VerifyEmailRoute: VerifyEmailRoute,
   ProfileUsernameRoute: ProfileUsernameRouteWithChildren,
 }
 export const routeTree = rootRouteImport

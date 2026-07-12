@@ -67,13 +67,15 @@ type ProfileRepository struct {
 }
 
 type Repository struct {
-	ID         pgtype.UUID
-	ProfileID  pgtype.UUID
-	RepoUrl    string
-	Branch     string
-	Visibility string
-	CreatedAt  pgtype.Timestamptz
-	UpdatedAt  pgtype.Timestamptz
+	ID                       pgtype.UUID
+	ProfileID                pgtype.UUID
+	RepoUrl                  string
+	DefaultBranch            string
+	DefaultTargetDirectory   string
+	DefaultPreInstallScript  pgtype.Text
+	DefaultPostInstallScript pgtype.Text
+	CreatedAt                pgtype.Timestamptz
+	UpdatedAt                pgtype.Timestamptz
 }
 
 type User struct {
@@ -83,6 +85,7 @@ type User struct {
 	Email         string
 	EmailVerified bool
 	PasswordHash  string
+	Role          string
 	Banned        bool
 	CreatedAt     pgtype.Timestamptz
 	UpdatedAt     pgtype.Timestamptz

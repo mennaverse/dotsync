@@ -24,8 +24,19 @@ func (q *Queries) BanUser(ctx context.Context, id pgtype.UUID) error {
 	return err
 }
 
+const countUsers = `-- name: CountUsers :one
+SELECT COUNT(*) FROM "user"
+`
+
+func (q *Queries) CountUsers(ctx context.Context) (int64, error) {
+	row := q.db.QueryRow(ctx, countUsers)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, name, username, email, email_verified, password_hash, banned, created_at, updated_at FROM "user" WHERE email = $1 LIMIT 1
+SELECT id, name, username, email, email_verified, password_hash, role, banned, created_at, updated_at FROM "user" WHERE email = $1 LIMIT 1
 `
 
 func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
@@ -38,6 +49,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.Email,
 		&i.EmailVerified,
 		&i.PasswordHash,
+		&i.Role,
 		&i.Banned,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -46,7 +58,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT id, name, username, email, email_verified, password_hash, banned, created_at, updated_at FROM "user" WHERE id = $1 LIMIT 1
+SELECT id, name, username, email, email_verified, password_hash, role, banned, created_at, updated_at FROM "user" WHERE id = $1 LIMIT 1
 `
 
 func (q *Queries) GetUserByID(ctx context.Context, id pgtype.UUID) (User, error) {
@@ -59,6 +71,7 @@ func (q *Queries) GetUserByID(ctx context.Context, id pgtype.UUID) (User, error)
 		&i.Email,
 		&i.EmailVerified,
 		&i.PasswordHash,
+		&i.Role,
 		&i.Banned,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -67,7 +80,7 @@ func (q *Queries) GetUserByID(ctx context.Context, id pgtype.UUID) (User, error)
 }
 
 const getUserByUsername = `-- name: GetUserByUsername :one
-SELECT id, name, username, email, email_verified, password_hash, banned, created_at, updated_at FROM "user" WHERE username = $1 LIMIT 1
+SELECT id, name, username, email, email_verified, password_hash, role, banned, created_at, updated_at FROM "user" WHERE username = $1 LIMIT 1
 `
 
 func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User, error) {
@@ -80,6 +93,7 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User,
 		&i.Email,
 		&i.EmailVerified,
 		&i.PasswordHash,
+		&i.Role,
 		&i.Banned,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -88,7 +102,7 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User,
 }
 
 const getUserByUsernameOrEmail = `-- name: GetUserByUsernameOrEmail :one
-SELECT id, name, username, email, email_verified, password_hash, banned, created_at, updated_at FROM "user" WHERE username = $1 OR email = $1 LIMIT 1
+SELECT id, name, username, email, email_verified, password_hash, role, banned, created_at, updated_at FROM "user" WHERE username = $1 OR email = $1 LIMIT 1
 `
 
 func (q *Queries) GetUserByUsernameOrEmail(ctx context.Context, username string) (User, error) {
@@ -101,6 +115,7 @@ func (q *Queries) GetUserByUsernameOrEmail(ctx context.Context, username string)
 		&i.Email,
 		&i.EmailVerified,
 		&i.PasswordHash,
+		&i.Role,
 		&i.Banned,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -109,9 +124,9 @@ func (q *Queries) GetUserByUsernameOrEmail(ctx context.Context, username string)
 }
 
 const insertUser = `-- name: InsertUser :one
-INSERT INTO "user" (username, email, email_verified, password_hash)
-VALUES ($1, $2, $3, $4)
-RETURNING id, name, username, email, email_verified, password_hash, banned, created_at, updated_at
+INSERT INTO "user" (username, email, email_verified, password_hash, role)
+VALUES ($1, $2, $3, $4, $5)
+RETURNING id, name, username, email, email_verified, password_hash, role, banned, created_at, updated_at
 `
 
 type InsertUserParams struct {
@@ -119,6 +134,7 @@ type InsertUserParams struct {
 	Email         string
 	EmailVerified bool
 	PasswordHash  string
+	Role          string
 }
 
 func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) (User, error) {
@@ -127,6 +143,7 @@ func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) (User, e
 		arg.Email,
 		arg.EmailVerified,
 		arg.PasswordHash,
+		arg.Role,
 	)
 	var i User
 	err := row.Scan(
@@ -136,6 +153,7 @@ func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) (User, e
 		&i.Email,
 		&i.EmailVerified,
 		&i.PasswordHash,
+		&i.Role,
 		&i.Banned,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -188,6 +206,24 @@ type UpdateUserPasswordParams struct {
 
 func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error {
 	_, err := q.db.Exec(ctx, updateUserPassword, arg.PasswordHash, arg.ID)
+	return err
+}
+
+const updateUserRole = `-- name: UpdateUserRole :exec
+UPDATE "user"
+SET
+    role = $1,
+    updated_at = CURRENT_TIMESTAMP
+WHERE id = $2
+`
+
+type UpdateUserRoleParams struct {
+	Role string
+	ID   pgtype.UUID
+}
+
+func (q *Queries) UpdateUserRole(ctx context.Context, arg UpdateUserRoleParams) error {
+	_, err := q.db.Exec(ctx, updateUserRole, arg.Role, arg.ID)
 	return err
 }
 

@@ -9,10 +9,17 @@ tasks:
   setup-dev:
     desc: Setup the development environment
     cmds:
-      - task build-frontend
+      - task: build-frontend
     silent: true
 
-  build-frontend:
+  frontend-run:
+    desc: Run the frontend application
+    dir: ./apps/frontend
+    cmds:
+      - pnpm run dev
+    silent: true
+
+  frontend-build:
     desc: Build the frontend application
     dir: ./apps/frontend
     cmds:
@@ -20,21 +27,21 @@ tasks:
       - pnpm build
     silent: true
 
-  test-frontend:
+  frontend-test:
     desc: Test the frontend application
     dir: ./apps/frontend
     cmds:
       - pnpm test
     silent: true
 
-  extract-messages-frontend:
+  frontend-extract-messages:
     desc: Extract messages from the frontend application
     dir: ./apps/frontend
     cmds:
       - pnpm run extract-messages
     silent: true
 
-  extract-messages-watch-frontend:
+  frontend-extract-messages-watch:
     desc: Extract messages from the frontend application
     dir: ./apps/frontend
     cmds:
@@ -42,21 +49,42 @@ tasks:
     interactive: true
     silent: true
 
-  build-cli:
+  cli-build:
     desc: Build the CLI application
     cmds:
       - go build -ldflags "-X consts.RepoURL={{.REPO_URL}}" -o bin/dsy ./apps/cli
     silent: true
 
-  generate-slqc:
+  backend-generate-slqc:
     desc: Generate the SQLc code
     dir: ./apps/backend
     cmds:
       - sqlc generate
     silent: true
 
-  run-dev-detached:
+  backend-run-dev-detached:
     desc: Run the development environment detached using podman compose
     cmds:
       - podman compose -f docker-compose.dev.yml up -d --build
+    silent: true
+
+  backend-stop-dev:
+    desc: Stop the development environment using podman compose
+    cmds:
+      - podman compose -f docker-compose.dev.yml down
+    silent: true
+
+  backend-migrate-database:
+    desc: Run the database migrations
+    cmds:
+      - task: backend-run-dev-detached
+      - podman exec -it dotsync-backend ./dotsync-backend migrate up
+    silent: true
+
+  backend-reset-volumes:
+    desc: Reset the volumes for the development environment
+    cmds:
+      - task: backend-stop-dev
+      - podman volume rm dotsync_dsy_db_data
+      - podman volume rm dotsync_dsy_mailpit_data
     silent: true

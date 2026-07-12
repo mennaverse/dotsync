@@ -19,6 +19,12 @@ func StartServer(bindAddress string) error {
 
 	e.Use(middleware.BodyLimit(middleware.KB * 1024 * 5)) // 5MB
 
+	e.GET("/api/ping", func(c *echo.Context) error {
+		return c.JSON(http.StatusOK, map[string]string{
+			"message": "pong",
+		})
+	})
+
 	handler.RegisterRoutes(e)
 
 	fmt.Printf("Serving Dotsync in %s\n", bindAddress)
@@ -42,7 +48,7 @@ func errorHandler(c *echo.Context, err error) {
 	if appErr, ok := errors.AsType[*types.AppError](err); ok {
 		c.Logger().Error(appErr.Error())
 		c.JSON(appErr.StatusCode, map[string]any{
-			"code":    appErr.StatusCode,
+			"code":    appErr.Code,
 			"message": appErr.Message,
 		})
 		return

@@ -39,14 +39,25 @@ services:
     restart: unless-stopped
     volumes:
       - dsy_mailpit_data:/data
-    ports:
-      - 8025:8025
-      - 1025:1025
     environment:
       - MP_MAX_MESSAGES=5000
       - MP_DATABASE=/data/mailpit.db
       - MP_SMTP_AUTH_ACCEPT_ANY=1
       - MP_SMTP_AUTH_ALLOW_INSECURE=1
+    ports:
+      - 8025:8025
+      - 1025:1025
+
+  seaweedfs:
+    image: chrislusf/seaweedfs
+    container_name: seaweedfs
+    restart: unless-stopped
+    environment:
+      - AWS_ACCESS_KEY=dotsync_user
+      - AWS_SECRET_ACCESS_KEY=dotsync_password
+      - S3_BUCKET=dotsync
+    ports:
+      - 8333:8333
 
 
 volumes:

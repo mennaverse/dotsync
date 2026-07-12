@@ -8,8 +8,8 @@ export function Paragraph({ className, children, ...props }: ParagraphProps) {
     <p
       {...props}
       className={clsx(
-        `text-gray-800 dark:text-gray-200 text-base leading-relaxed`,
-        className,
+        "text-base leading-relaxed",
+        className ?? "text-gray-800 dark:text-gray-200",
       )}
     >
       {children}

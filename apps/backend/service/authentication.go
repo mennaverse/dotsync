@@ -62,16 +62,26 @@ func (s *DefaultAuthenticationService) Register(ctx context.Context, req *dto.Re
 		return nil, err
 	}
 
+	userCount, err := s.queries.CountUsers(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	role := consts.UserRoleUser
+	if userCount == 0 {
+		role = consts.UserRoleAdmin
+	}
+
 	user, err := s.queries.InsertUser(ctx, db.InsertUserParams{
 		Username:      req.Username,
 		Email:         req.Email,
 		EmailVerified: !emailVerificationEnabled,
 		PasswordHash:  hashedPassword,
+		Role:          role,
 	})
 	if err != nil {
-		var pgErr *pgconn.PgError
-		if errors.As(err, &pgErr) {
-			if pgErr.Code == "23505" { // unique_violation
+		if pgErr, ok := errors.AsType[*pgconn.PgError](err); ok {
+			if pgErr.Code == consts.PgUniqueViolationErrorCode {
 				return nil, consts.ErrEmailOrUsernameAlreadyExists
 			}
 		}
@@ -88,7 +98,7 @@ func (s *DefaultAuthenticationService) Register(ctx context.Context, req *dto.Re
 func (s *DefaultAuthenticationService) Login(ctx context.Context, req *dto.LoginRequest) (*dto.TokenPair, error) {
 	user, err := s.queries.GetUserByUsernameOrEmail(ctx, req.Login)
 	if err != nil {
-		return nil, consts.ErrUserNotFound
+		return nil, consts.ErrInvalidCredentials
 	}
 
 	if user.Banned {
@@ -109,14 +119,14 @@ func (s *DefaultAuthenticationService) Login(ctx context.Context, req *dto.Login
 		return nil, err
 	}
 
-	refreshToken, _, err := s.cryptoManager.GenerateRefreshToken()
+	refreshToken, refreshTokenHash, err := s.cryptoManager.GenerateRefreshToken()
 	if err != nil {
 		return nil, err
 	}
 
 	_, err = s.queries.InsertUserRefreshToken(ctx, db.InsertUserRefreshTokenParams{
 		UserID:    user.ID,
-		TokenHash: s.cryptoManager.HashToken(refreshToken),
+		TokenHash: refreshTokenHash,
 		ExpiresAt: pgtype.Timestamptz{
 			Time:  time.Now().Add(7 * 24 * time.Hour),
 			Valid: true,
@@ -173,7 +183,7 @@ func (s *DefaultAuthenticationService) RefreshToken(ctx context.Context, refresh
 
 	user, err := s.queries.GetUserByID(ctx, dbSession.UserID)
 	if err != nil {
-		return nil, consts.ErrUserNotFound
+		return nil, consts.ErrInvalidCredentials
 	}
 
 	accessToken, err := s.cryptoManager.GenerateJwtToken(&user)
@@ -243,7 +253,7 @@ func (s *DefaultAuthenticationService) ResendVerificationEmail(ctx context.Conte
 
 	user, err := s.queries.GetUserByEmail(ctx, email)
 	if err != nil {
-		return consts.ErrUserNotFound
+		return nil // Do not reveal that the email does not exist
 	}
 
 	if user.EmailVerified {

@@ -9,9 +9,10 @@ CREATE TABLE
         email VARCHAR(255) NOT NULL UNIQUE,
         email_verified BOOLEAN DEFAULT FALSE NOT NULL,
         password_hash VARCHAR(255) NOT NULL,
+        role VARCHAR(50) DEFAULT 'user' NOT NULL,
         banned BOOLEAN DEFAULT FALSE NOT NULL,
-        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
     );
 
 CREATE TABLE
@@ -20,7 +21,7 @@ CREATE TABLE
         user_id UUID REFERENCES "user" (id) ON DELETE CASCADE,
         token_hash VARCHAR(64) NOT NULL UNIQUE,
         expires_at TIMESTAMPTZ NOT NULL,
-        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
     );
 
 CREATE TABLE
@@ -29,7 +30,7 @@ CREATE TABLE
         user_id UUID REFERENCES "user" (id) ON DELETE CASCADE,
         token_hash VARCHAR(255) NOT NULL UNIQUE,
         expires_at TIMESTAMPTZ NOT NULL,
-        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
     );
 
 CREATE TABLE
@@ -38,7 +39,7 @@ CREATE TABLE
         user_id UUID REFERENCES "user" (id) ON DELETE CASCADE,
         token_hash VARCHAR(255) NOT NULL UNIQUE,
         expires_at TIMESTAMPTZ NOT NULL,
-        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
     );
 
 CREATE TABLE
@@ -48,8 +49,8 @@ CREATE TABLE
         name VARCHAR(255),
         description TEXT,
         visibility VARCHAR(50) NOT NULL,
-        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
     );
 
 CREATE TABLE
@@ -60,8 +61,8 @@ CREATE TABLE
         description TEXT,
         category VARCHAR(50) NOT NULL,
         visibility VARCHAR(50) NOT NULL,
-        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
     );
 
 CREATE TABLE
@@ -74,8 +75,8 @@ CREATE TABLE
         main_install_script TEXT NOT NULL,
         post_install_script TEXT,
         uninstall_script TEXT,
-        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
         CONSTRAINT unique_installer_os_shell UNIQUE (installer_id, os_family, shell_type)
     );
 
@@ -91,11 +92,13 @@ CREATE TABLE
     "repository" (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
         profile_id UUID REFERENCES "profile" (id) ON DELETE CASCADE,
-        repo_url TEXT NOT NULL UNIQUE,
-        branch VARCHAR(50) DEFAULT 'main' NOT NULL,
-        visibility VARCHAR(50) NOT NULL,
-        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+        repo_url TEXT NOT NULL,
+        default_branch VARCHAR(50) DEFAULT 'main' NOT NULL,
+        default_target_directory TEXT NOT NULL,
+        default_pre_install_script TEXT,
+        default_post_install_script TEXT,
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
     );
 
 CREATE TABLE
@@ -115,8 +118,8 @@ CREATE TABLE
         user_id UUID REFERENCES "user" (id) ON DELETE CASCADE,
         token VARCHAR(255) NOT NULL UNIQUE,
         device_name VARCHAR(255),
-        last_used_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+        last_used_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
     );
 
 -- +goose Down

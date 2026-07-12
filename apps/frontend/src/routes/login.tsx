@@ -1,12 +1,12 @@
+import { ErrorMutationArea } from "@/components/form/error-mutation-area";
 import { Page } from "@/components/page";
 import { Paragraph } from "@/components/typography/paragraph";
 import { useAppForm } from "@/hooks/form";
 import { useLoginMutation } from "@/hooks/use-login-mutation";
 import { loginFormSchema } from "@/schemas/login";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useDebounceCallback, useDocumentTitle } from "usehooks-ts";
+import { useDocumentTitle } from "usehooks-ts";
 import z from "zod";
 
 const searchSchema = z.object({
@@ -23,10 +23,6 @@ function RouteComponent() {
   const { registered } = Route.useSearch();
   const navigate = useNavigate();
   const loginMutation = useLoginMutation();
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const debouncedSetErrorMessageNull = useDebounceCallback(() => {
-    setErrorMessage(null);
-  }, 5000);
 
   useDocumentTitle(t("login_doctitle"));
 
@@ -43,12 +39,6 @@ function RouteComponent() {
       await loginMutation.mutateAsync(
         { login, password },
         {
-          onError: async (error) => {
-            if (error.name) {
-              setErrorMessage(t("login_error_invalid_credentials"));
-              debouncedSetErrorMessageNull();
-            }
-          },
           onSuccess: async () => {
             await navigate({ to: "/home" });
           },
@@ -66,13 +56,7 @@ function RouteComponent() {
           </Paragraph>
         </div>
       )}
-      {errorMessage && (
-        <div className="w-full max-w-lg flex justify-center gap-2 bg-red-300 dark:bg-red-900 p-4 rounded-md border border-red-700">
-          <Paragraph className="text-red-700 dark:text-red-300">
-            {errorMessage}
-          </Paragraph>
-        </div>
-      )}
+      <ErrorMutationArea mutation={loginMutation} />
       <form
         className="w-full max-w-lg flex flex-col justify-center"
         onSubmit={(e) => {

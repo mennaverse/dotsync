@@ -27,7 +27,7 @@ export class AuthService {
   }
 
   static async verifyEmail(token: string) {
-    const response = await http.post("/api/auth/verify-email", { token });
+    const response = await http.post(`/api/auth/verify-email?token=${token}`);
     return response.data;
   }
 

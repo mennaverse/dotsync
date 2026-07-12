@@ -77,6 +77,7 @@ export function UserPanel({ username }: UserPanelProps) {
                   <span>{t("navbar_panel_repositories")}</span>
                 </div>
               </button>
+              <hr className="w-full" />
               <button
                 className="w-full bg-transparent hover:bg-gray-300 dark:hover:bg-gray-700 py-1 px-2 rounded text-left"
                 onClick={handleLogout}

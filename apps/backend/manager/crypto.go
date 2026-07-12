@@ -79,6 +79,7 @@ func (c *DefaultCryptoManager) GenerateJwtToken(user *db.User) (string, error) {
 		"user_id":  user.ID.String(),
 		"username": user.Username,
 		"email":    user.Email,
+		"role":     user.Role,
 		"exp":      time.Now().Add(time.Hour).Unix(),
 	})
 

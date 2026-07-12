@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/labstack/echo/v5"
@@ -25,9 +24,7 @@ func registerHandler(c *echo.Context) error {
 
 	user, err := services.Authentication.Register(ctx, req)
 	if err != nil {
-		if errors.Is(err, consts.ErrEmailOrUsernameAlreadyExists) {
-			return types.NewAppError(http.StatusConflict, "E-mail or username already exists", err)
-		}
+		err = consts.ConvertToAppError(err)
 		return err
 	}
 
@@ -52,6 +49,7 @@ func loginHandler(c *echo.Context) error {
 
 	pair, err := services.Authentication.Login(ctx, req)
 	if err != nil {
+		err = consts.ConvertToAppError(err)
 		return err
 	}
 
@@ -84,6 +82,7 @@ func logoutHandler(c *echo.Context) error {
 
 	ctx := c.Request().Context()
 	if err := services.Authentication.Logout(ctx, refreshToken); err != nil {
+		err = consts.ConvertToAppError(err)
 		return err
 	}
 
@@ -114,6 +113,7 @@ func logoutAllSessionsHandler(c *echo.Context) error {
 
 	ctx := c.Request().Context()
 	if err := services.Authentication.LogoutAllSessions(ctx, claims.UserID); err != nil {
+		err = consts.ConvertToAppError(err)
 		return err
 	}
 
@@ -143,16 +143,20 @@ func verifyEmailHandler(c *echo.Context) error {
 	token := c.QueryParam("token")
 
 	if token == "" {
-		return c.JSON(http.StatusBadRequest, types.JsonResponse{
-			"code":    consts.HttpMissingTokenCode,
-			"message": "Missing token in query parameters.",
-		})
+		return types.NewAppError(
+			http.StatusBadRequest,
+			consts.HttpMissingTokenCode,
+			"Missing token in query parameters.",
+			nil,
+		)
 	}
 
 	ctx := c.Request().Context()
 	if err := services.Authentication.VerifyEmail(ctx, token); err != nil {
+		err = consts.ConvertToAppError(err)
 		return err
 	}
+
 	return c.JSON(http.StatusOK, types.JsonResponse{
 		"code":    consts.HttpSuccessCode,
 		"message": "Email verified successfully.",
@@ -176,6 +180,7 @@ func resendVerificationEmailHandler(c *echo.Context) error {
 	}
 
 	if err := services.Authentication.ResendVerificationEmail(ctx, req.Email); err != nil {
+		err = consts.ConvertToAppError(err)
 		return err
 	}
 
@@ -198,6 +203,7 @@ func forgotPasswordHandler(c *echo.Context) error {
 	}
 
 	if err := services.Authentication.ForgotPassword(ctx, req.Email); err != nil {
+		err = consts.ConvertToAppError(err)
 		return err
 	}
 
@@ -229,6 +235,7 @@ func resetPasswordHandler(c *echo.Context) error {
 	}
 
 	if err := services.Authentication.ResetPassword(ctx, token, req.NewPassword); err != nil {
+		err = consts.ConvertToAppError(err)
 		return err
 	}
 

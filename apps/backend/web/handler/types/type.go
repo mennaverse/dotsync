@@ -5,6 +5,7 @@ import "fmt"
 type JsonResponse map[string]any
 
 type AppError struct {
+	Code       string `json:"code"`
 	StatusCode int    `json:"status_code"`
 	Message    string `json:"message"`
 	RawError   error  `json:"-"`
@@ -17,8 +18,9 @@ func (e *AppError) Error() string {
 	return fmt.Sprintf("[%d] %s: %v", e.StatusCode, e.Message, e.RawError)
 }
 
-func NewAppError(statusCode int, message string, rawError error) *AppError {
+func NewAppError(statusCode int, code string, message string, rawError error) *AppError {
 	return &AppError{
+		Code:       code,
 		StatusCode: statusCode,
 		Message:    message,
 		RawError:   rawError,
