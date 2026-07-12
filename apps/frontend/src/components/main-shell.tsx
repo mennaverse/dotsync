@@ -3,9 +3,9 @@ import { Navbar } from "./navbar";
 
 export function MainShell({ children }: PropsWithChildren) {
   return (
-    <div className="flex flex-col items-center min-h-screen">
+    <div className="flex flex-col min-h-screen size-full">
       <Navbar />
-      <main className="flex-grow container">{children}</main>
+      <main className="flex-grow w-full relative">{children}</main>
     </div>
   );
 }

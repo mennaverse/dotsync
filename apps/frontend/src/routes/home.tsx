@@ -1,3 +1,4 @@
+import { Page } from "@/components/page";
 import { createFileRoute } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { useDocumentTitle } from "usehooks-ts";
@@ -8,7 +9,7 @@ export const Route = createFileRoute("/home")({
 
 function RouteComponent() {
   const { t } = useTranslation();
-  useDocumentTitle(t("title.home"));
+  useDocumentTitle(t("home_doctitle"));
 
-  return <div className="container">Home Page</div>;
+  return <Page contained>Home Page</Page>;
 }

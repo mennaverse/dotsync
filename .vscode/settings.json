@@ -27,12 +27,12 @@
     "*/.hg/store/**": true,
     "**/node_modules/**": true,
     "**/dist/**": true,
-    "**/routeTree.gen.ts": true
+    "**/route-tree.gen.ts": true
   },
   "files.readonlyInclude": {
-    "**/routeTree.gen.ts": true
+    "**/route-tree.gen.ts": true
   },
   "search.exclude": {
-    "**/routeTree.gen.ts": true
+    "**/route-tree.gen.ts": true
   }
 }

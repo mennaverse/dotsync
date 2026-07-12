@@ -11,10 +11,10 @@ export function NavLink({
   children: ReactNode;
 }) {
   return (
-    <li className="hover:text-teal-200 transition-colors duration-200">
-      <Link to={to} className={className}>
+    <Link to={to} className={className}>
+      <li className="hover:text-teal-200 transition-colors duration-200">
         {children}
-      </Link>
-    </li>
+      </li>
+    </Link>
   );
 }

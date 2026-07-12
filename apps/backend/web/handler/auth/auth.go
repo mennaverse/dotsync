@@ -87,6 +87,21 @@ func logoutHandler(c *echo.Context) error {
 		return err
 	}
 
+	c.SetCookie(&http.Cookie{
+		Name:     consts.AccessTokenCookieName,
+		Value:    "",
+		SameSite: http.SameSiteStrictMode,
+		HttpOnly: true,
+		Path:     "/",
+	})
+	c.SetCookie(&http.Cookie{
+		Name:     consts.RefreshTokenCookieName,
+		Value:    "",
+		SameSite: http.SameSiteStrictMode,
+		HttpOnly: true,
+		Path:     "/",
+	})
+
 	return c.JSON(http.StatusOK, types.JsonResponse{
 		"code":    consts.HttpSuccessCode,
 		"message": "User logged out successfully.",
@@ -101,6 +116,21 @@ func logoutAllSessionsHandler(c *echo.Context) error {
 	if err := services.Authentication.LogoutAllSessions(ctx, claims.UserID); err != nil {
 		return err
 	}
+
+	c.SetCookie(&http.Cookie{
+		Name:     consts.AccessTokenCookieName,
+		Value:    "",
+		SameSite: http.SameSiteStrictMode,
+		HttpOnly: true,
+		Path:     "/",
+	})
+	c.SetCookie(&http.Cookie{
+		Name:     consts.RefreshTokenCookieName,
+		Value:    "",
+		SameSite: http.SameSiteStrictMode,
+		HttpOnly: true,
+		Path:     "/",
+	})
 
 	return c.JSON(http.StatusOK, types.JsonResponse{
 		"code":    consts.HttpSuccessCode,

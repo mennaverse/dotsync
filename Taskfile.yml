@@ -6,6 +6,42 @@ vars:
   REPO_URL: $REPO_URL
 
 tasks:
+  setup-dev:
+    desc: Setup the development environment
+    cmds:
+      - task build-frontend
+    silent: true
+
+  build-frontend:
+    desc: Build the frontend application
+    dir: ./apps/frontend
+    cmds:
+      - pnpm install
+      - pnpm build
+    silent: true
+
+  test-frontend:
+    desc: Test the frontend application
+    dir: ./apps/frontend
+    cmds:
+      - pnpm test
+    silent: true
+
+  extract-messages-frontend:
+    desc: Extract messages from the frontend application
+    dir: ./apps/frontend
+    cmds:
+      - pnpm run extract-messages
+    silent: true
+
+  extract-messages-watch-frontend:
+    desc: Extract messages from the frontend application
+    dir: ./apps/frontend
+    cmds:
+      - pnpm run extract-messages -- --watch
+    interactive: true
+    silent: true
+
   build-cli:
     desc: Build the CLI application
     cmds:

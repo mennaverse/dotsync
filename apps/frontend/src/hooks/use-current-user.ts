@@ -6,7 +6,12 @@ export function useCurrentUser() {
     retry: false,
     queryKey: ["user", "current"],
     queryFn: async () => {
-      return (await AuthService.getCurrentUser()).data;
+      try {
+        const { data } = await AuthService.getCurrentUser();
+        return data;
+      } catch (error) {
+        return null;
+      }
     },
   });
 }

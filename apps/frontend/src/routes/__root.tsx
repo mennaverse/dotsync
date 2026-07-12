@@ -18,10 +18,7 @@ function RootComponent() {
 
       <ReactQueryDevtools />
       <TanStackRouterDevtools />
-      <TanStackDevtools
-        config={{ hideUntilHover: true }}
-        plugins={[formDevtoolsPlugin()]}
-      />
+      <TanStackDevtools plugins={[formDevtoolsPlugin()]} />
     </>
   );
 }

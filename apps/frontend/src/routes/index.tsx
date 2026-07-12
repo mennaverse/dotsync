@@ -8,7 +8,7 @@ export const Route = createFileRoute("/")({
 
 function RouteComponent() {
   const { t } = useTranslation();
-  useDocumentTitle(t("title"));
+  useDocumentTitle(t("index_doctitle"));
 
   return (
     <div className="container">

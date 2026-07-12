@@ -53,6 +53,10 @@ func (s *DefaultAuthenticationService) Register(ctx context.Context, req *dto.Re
 		return nil, err
 	}
 
+	if len(req.Password) > consts.MaxPasswordLength {
+		return nil, consts.ErrPasswordTooLong
+	}
+
 	hashedPassword, err := s.cryptoManager.HashPassword(req.Password)
 	if err != nil {
 		return nil, err
@@ -106,6 +110,18 @@ func (s *DefaultAuthenticationService) Login(ctx context.Context, req *dto.Login
 	}
 
 	refreshToken, _, err := s.cryptoManager.GenerateRefreshToken()
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = s.queries.InsertUserRefreshToken(ctx, db.InsertUserRefreshTokenParams{
+		UserID:    user.ID,
+		TokenHash: s.cryptoManager.HashToken(refreshToken),
+		ExpiresAt: pgtype.Timestamptz{
+			Time:  time.Now().Add(7 * 24 * time.Hour),
+			Valid: true,
+		},
+	})
 	if err != nil {
 		return nil, err
 	}

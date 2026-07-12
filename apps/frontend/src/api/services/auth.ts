@@ -11,8 +11,8 @@ export class AuthService {
     return response.data;
   }
 
-  static async login(email: string, password: string) {
-    const response = await http.post("/api/auth/login", { email, password });
+  static async login(login: string, password: string) {
+    const response = await http.post("/api/auth/login", { login, password });
     return response.data;
   }
 

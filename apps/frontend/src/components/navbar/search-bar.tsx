@@ -3,14 +3,16 @@ import { Field } from "@ark-ui/react/field";
 import { useForm } from "@tanstack/react-form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { useTranslation } from "react-i18next";
 
 export function SearchBar() {
+  const { t } = useTranslation();
   const form = useForm({
     defaultValues: {
       search: "",
     },
     validators: {
-      onChange: searchBarFormSchema,
+      onChange: searchBarFormSchema(t),
     },
     onSubmit: ({ value }) => {
       const { search } = value;
@@ -36,7 +38,7 @@ export function SearchBar() {
               onChange={(e) => field.handleChange(e.target.value)}
               onBlur={field.handleBlur}
               type="text"
-              placeholder="Search..."
+              placeholder={t("search_placeholder")}
               className="w-full rounded-md bg-teal-700 border border-teal-300
                         px-2 py-1 focus:ring focus:ring-teal-200"
             />

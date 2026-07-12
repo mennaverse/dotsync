@@ -17,4 +17,5 @@ var (
 	ErrHttpInvalidRefreshTokenCode  = errors.New("Invalid refresh token")
 	ErrEmailOrUsernameAlreadyExists = errors.New("Email or username already exists")
 	ErrHttpMissingTokenCode         = errors.New("Missing token")
+	ErrPasswordTooLong              = errors.New("Password exceeds maximum length")
 )

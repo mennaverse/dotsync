@@ -11,11 +11,13 @@
 import { Route as rootRouteImport } from "./routes/__root"
 import { Route as SearchRouteImport } from "./routes/search"
 import { Route as RegisterRouteImport } from "./routes/register"
+import { Route as LogoutRouteImport } from "./routes/logout"
 import { Route as LoginRouteImport } from "./routes/login"
 import { Route as HomeRouteImport } from "./routes/home"
 import { Route as AboutRouteImport } from "./routes/about"
 import { Route as IndexRouteImport } from "./routes/index"
 import { Route as ProfileUsernameRouteImport } from "./routes/profile/$username"
+import { Route as ProfileUsernameRepositoriesRouteImport } from "./routes/profile/$username/repositories"
 
 const SearchRoute = SearchRouteImport.update({
   id: "/search",
@@ -25,6 +27,11 @@ const SearchRoute = SearchRouteImport.update({
 const RegisterRoute = RegisterRouteImport.update({
   id: "/register",
   path: "/register",
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LogoutRoute = LogoutRouteImport.update({
+  id: "/logout",
+  path: "/logout",
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -52,24 +59,34 @@ const ProfileUsernameRoute = ProfileUsernameRouteImport.update({
   path: "/profile/$username",
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileUsernameRepositoriesRoute =
+  ProfileUsernameRepositoriesRouteImport.update({
+    id: "/repositories",
+    path: "/repositories",
+    getParentRoute: () => ProfileUsernameRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute
   "/about": typeof AboutRoute
   "/home": typeof HomeRoute
   "/login": typeof LoginRoute
+  "/logout": typeof LogoutRoute
   "/register": typeof RegisterRoute
   "/search": typeof SearchRoute
-  "/profile/$username": typeof ProfileUsernameRoute
+  "/profile/$username": typeof ProfileUsernameRouteWithChildren
+  "/profile/$username/repositories": typeof ProfileUsernameRepositoriesRoute
 }
 export interface FileRoutesByTo {
   "/": typeof IndexRoute
   "/about": typeof AboutRoute
   "/home": typeof HomeRoute
   "/login": typeof LoginRoute
+  "/logout": typeof LogoutRoute
   "/register": typeof RegisterRoute
   "/search": typeof SearchRoute
-  "/profile/$username": typeof ProfileUsernameRoute
+  "/profile/$username": typeof ProfileUsernameRouteWithChildren
+  "/profile/$username/repositories": typeof ProfileUsernameRepositoriesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,9 +94,11 @@ export interface FileRoutesById {
   "/about": typeof AboutRoute
   "/home": typeof HomeRoute
   "/login": typeof LoginRoute
+  "/logout": typeof LogoutRoute
   "/register": typeof RegisterRoute
   "/search": typeof SearchRoute
-  "/profile/$username": typeof ProfileUsernameRoute
+  "/profile/$username": typeof ProfileUsernameRouteWithChildren
+  "/profile/$username/repositories": typeof ProfileUsernameRepositoriesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -88,27 +107,33 @@ export interface FileRouteTypes {
     | "/about"
     | "/home"
     | "/login"
+    | "/logout"
     | "/register"
     | "/search"
     | "/profile/$username"
+    | "/profile/$username/repositories"
   fileRoutesByTo: FileRoutesByTo
   to:
     | "/"
     | "/about"
     | "/home"
     | "/login"
+    | "/logout"
     | "/register"
     | "/search"
     | "/profile/$username"
+    | "/profile/$username/repositories"
   id:
     | "__root__"
     | "/"
     | "/about"
     | "/home"
     | "/login"
+    | "/logout"
     | "/register"
     | "/search"
     | "/profile/$username"
+    | "/profile/$username/repositories"
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -116,9 +141,10 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
+  LogoutRoute: typeof LogoutRoute
   RegisterRoute: typeof RegisterRoute
   SearchRoute: typeof SearchRoute
-  ProfileUsernameRoute: typeof ProfileUsernameRoute
+  ProfileUsernameRoute: typeof ProfileUsernameRouteWithChildren
 }
 
 declare module "@tanstack/react-router" {
@@ -135,6 +161,13 @@ declare module "@tanstack/react-router" {
       path: "/register"
       fullPath: "/register"
       preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/logout": {
+      id: "/logout"
+      path: "/logout"
+      fullPath: "/logout"
+      preLoaderRoute: typeof LogoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     "/login": {
@@ -172,17 +205,37 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof ProfileUsernameRouteImport
       parentRoute: typeof rootRouteImport
     }
+    "/profile/$username/repositories": {
+      id: "/profile/$username/repositories"
+      path: "/repositories"
+      fullPath: "/profile/$username/repositories"
+      preLoaderRoute: typeof ProfileUsernameRepositoriesRouteImport
+      parentRoute: typeof ProfileUsernameRoute
+    }
   }
 }
+
+interface ProfileUsernameRouteChildren {
+  ProfileUsernameRepositoriesRoute: typeof ProfileUsernameRepositoriesRoute
+}
+
+const ProfileUsernameRouteChildren: ProfileUsernameRouteChildren = {
+  ProfileUsernameRepositoriesRoute: ProfileUsernameRepositoriesRoute,
+}
+
+const ProfileUsernameRouteWithChildren = ProfileUsernameRoute._addFileChildren(
+  ProfileUsernameRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
+  LogoutRoute: LogoutRoute,
   RegisterRoute: RegisterRoute,
   SearchRoute: SearchRoute,
-  ProfileUsernameRoute: ProfileUsernameRoute,
+  ProfileUsernameRoute: ProfileUsernameRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

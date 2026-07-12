@@ -25,12 +25,8 @@ i18n
     },
 
     resources: {
-      en: {
-        translation: en,
-      },
-      "pt-BR": {
-        translation: ptBR,
-      },
+      en,
+      "pt-BR": ptBR,
     },
   });
 

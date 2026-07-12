@@ -1,4 +1,3 @@
-import { MainShell } from "@/components/main-shell";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/profile/$username")({
@@ -6,14 +5,6 @@ export const Route = createFileRoute("/profile/$username")({
 });
 
 function RouteComponent() {
-  return (
-    <MainShell>
-      <ProfilePage />
-    </MainShell>
-  );
-}
-
-function ProfilePage() {
   const { username } = Route.useParams();
 
   return (
