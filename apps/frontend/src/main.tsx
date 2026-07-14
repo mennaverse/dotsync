@@ -9,6 +9,7 @@ import {
   faCodeBranch,
   faEye,
   faEyeSlash,
+  faFileDownload,
   faMoon,
   faSun,
   faUser,
@@ -25,6 +26,7 @@ library.add(
   faCodeBranch,
   faUser,
   faArrowRightFromBracket,
+  faFileDownload,
 );
 
 const router = createRouter({ routeTree });

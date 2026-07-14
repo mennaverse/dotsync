@@ -1,6 +1,8 @@
 {
   "translation": {
     "about_doctitle": "About",
+    "account_installer_doctitle": "Installers",
+    "account_installer_heading": "Installers",
     "home_doctitle": "Home",
     "http_error_email_already_verified": "Email has already been verified",
     "http_error_email_or_username_already_exists": "Email or username already exists",
@@ -20,7 +22,6 @@
     "http_error_verification_token_expired": "Verification token has expired",
     "index_doctitle": "Index",
     "login_doctitle": "Login",
-    "login_error_invalid_credentials": "login_error_invalid_credentials",
     "login_login_label": "E-mail or username",
     "login_password_label": "Password",
     "login_register_button": "Register",
@@ -32,8 +33,9 @@
     "navbar_about": "About",
     "navbar_home": "Home",
     "navbar_login": "Log In",
+    "navbar_panel_installer": "Installers",
     "navbar_panel_logout": "Sign Out",
-    "navbar_panel_profile": "Profile",
+    "navbar_panel_my_account": "My Account",
     "navbar_panel_repositories": "Repositories",
     "navbar_register": "Register",
     "navbar_title": "DotSync",
@@ -53,6 +55,9 @@
     "validation_password_max_length": "Password must be at most 64 characters long.",
     "validation_password_min_length": "Password must be at least 8 characters long.",
     "validation_search_term_required": "Search term is required.",
-    "validation_username_min_length": "Username must be at least 3 characters long."
+    "validation_username_min_length": "Username must be at least 3 characters long.",
+    "verify_email_success_message": "Your email has been successfully verified. You can now log in.",
+    "verify_email_title": "Verify Email",
+    "verify_email_verifying_message": "Verifying your email..."
   }
 }

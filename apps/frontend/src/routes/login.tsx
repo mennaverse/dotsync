@@ -2,6 +2,7 @@ import { ErrorMutationArea } from "@/components/form/error-mutation-area";
 import { Page } from "@/components/page";
 import { Paragraph } from "@/components/typography/paragraph";
 import { useAppForm } from "@/hooks/form";
+import { useAuthGuard } from "@/hooks/use-auth-guard";
 import { useLoginMutation } from "@/hooks/use-login-mutation";
 import { loginFormSchema } from "@/schemas/login";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
@@ -25,6 +26,7 @@ function RouteComponent() {
   const loginMutation = useLoginMutation();
 
   useDocumentTitle(t("login_doctitle"));
+  useAuthGuard({ onAuthenticated: () => navigate({ to: "/home" }) });
 
   const form = useAppForm({
     defaultValues: {

@@ -1,6 +1,8 @@
 {
   "translation": {
     "about_doctitle": "",
+    "account_installer_doctitle": "",
+    "account_installer_heading": "",
     "home_doctitle": "",
     "http_error_email_already_verified": "",
     "http_error_email_or_username_already_exists": "",
@@ -20,7 +22,6 @@
     "http_error_verification_token_expired": "",
     "index_doctitle": "",
     "login_doctitle": "",
-    "login_error_invalid_credentials": "",
     "login_login_label": "",
     "login_password_label": "",
     "login_register_button": "",
@@ -32,8 +33,9 @@
     "navbar_about": "",
     "navbar_home": "",
     "navbar_login": "",
+    "navbar_panel_installer": "",
     "navbar_panel_logout": "",
-    "navbar_panel_profile": "",
+    "navbar_panel_my_account": "",
     "navbar_panel_repositories": "",
     "navbar_register": "",
     "navbar_title": "",
@@ -53,6 +55,9 @@
     "validation_password_max_length": "",
     "validation_password_min_length": "",
     "validation_search_term_required": "",
-    "validation_username_min_length": ""
+    "validation_username_min_length": "",
+    "verify_email_success_message": "",
+    "verify_email_title": "",
+    "verify_email_verifying_message": ""
   }
 }

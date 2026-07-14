@@ -17,8 +17,14 @@ import { Route as LoginRouteImport } from "./routes/login"
 import { Route as HomeRouteImport } from "./routes/home"
 import { Route as AboutRouteImport } from "./routes/about"
 import { Route as IndexRouteImport } from "./routes/index"
-import { Route as ProfileUsernameRouteImport } from "./routes/profile/$username"
-import { Route as ProfileUsernameRepositoriesRouteImport } from "./routes/profile/$username/repositories"
+import { Route as AUsernameRouteImport } from "./routes/a/$username"
+import { Route as AUsernameRepositoryRouteImport } from "./routes/a/$username/repository"
+import { Route as AUsernameProfileRouteImport } from "./routes/a/$username/profile"
+import { Route as AUsernameInstallerRouteImport } from "./routes/a/$username/installer"
+import { Route as AUsernameRepositoryRepositoryRouteImport } from "./routes/a/$username/repository/$repository"
+import { Route as AUsernameProfileProfileRouteImport } from "./routes/a/$username/profile/$profile"
+import { Route as AUsernameInstallerInstallerRouteImport } from "./routes/a/$username/installer/$installer"
+import { Route as AUsernameProfileProfileEditRouteImport } from "./routes/a/$username/profile/$profile/edit"
 
 const VerifyEmailRoute = VerifyEmailRouteImport.update({
   id: "/verify-email",
@@ -60,16 +66,48 @@ const IndexRoute = IndexRouteImport.update({
   path: "/",
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProfileUsernameRoute = ProfileUsernameRouteImport.update({
-  id: "/profile/$username",
-  path: "/profile/$username",
+const AUsernameRoute = AUsernameRouteImport.update({
+  id: "/a/$username",
+  path: "/a/$username",
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProfileUsernameRepositoriesRoute =
-  ProfileUsernameRepositoriesRouteImport.update({
-    id: "/repositories",
-    path: "/repositories",
-    getParentRoute: () => ProfileUsernameRoute,
+const AUsernameRepositoryRoute = AUsernameRepositoryRouteImport.update({
+  id: "/repository",
+  path: "/repository",
+  getParentRoute: () => AUsernameRoute,
+} as any)
+const AUsernameProfileRoute = AUsernameProfileRouteImport.update({
+  id: "/profile",
+  path: "/profile",
+  getParentRoute: () => AUsernameRoute,
+} as any)
+const AUsernameInstallerRoute = AUsernameInstallerRouteImport.update({
+  id: "/installer",
+  path: "/installer",
+  getParentRoute: () => AUsernameRoute,
+} as any)
+const AUsernameRepositoryRepositoryRoute =
+  AUsernameRepositoryRepositoryRouteImport.update({
+    id: "/$repository",
+    path: "/$repository",
+    getParentRoute: () => AUsernameRepositoryRoute,
+  } as any)
+const AUsernameProfileProfileRoute = AUsernameProfileProfileRouteImport.update({
+  id: "/$profile",
+  path: "/$profile",
+  getParentRoute: () => AUsernameProfileRoute,
+} as any)
+const AUsernameInstallerInstallerRoute =
+  AUsernameInstallerInstallerRouteImport.update({
+    id: "/$installer",
+    path: "/$installer",
+    getParentRoute: () => AUsernameInstallerRoute,
+  } as any)
+const AUsernameProfileProfileEditRoute =
+  AUsernameProfileProfileEditRouteImport.update({
+    id: "/edit",
+    path: "/edit",
+    getParentRoute: () => AUsernameProfileProfileRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -81,8 +119,14 @@ export interface FileRoutesByFullPath {
   "/register": typeof RegisterRoute
   "/search": typeof SearchRoute
   "/verify-email": typeof VerifyEmailRoute
-  "/profile/$username": typeof ProfileUsernameRouteWithChildren
-  "/profile/$username/repositories": typeof ProfileUsernameRepositoriesRoute
+  "/a/$username": typeof AUsernameRouteWithChildren
+  "/a/$username/installer": typeof AUsernameInstallerRouteWithChildren
+  "/a/$username/profile": typeof AUsernameProfileRouteWithChildren
+  "/a/$username/repository": typeof AUsernameRepositoryRouteWithChildren
+  "/a/$username/installer/$installer": typeof AUsernameInstallerInstallerRoute
+  "/a/$username/profile/$profile": typeof AUsernameProfileProfileRouteWithChildren
+  "/a/$username/repository/$repository": typeof AUsernameRepositoryRepositoryRoute
+  "/a/$username/profile/$profile/edit": typeof AUsernameProfileProfileEditRoute
 }
 export interface FileRoutesByTo {
   "/": typeof IndexRoute
@@ -93,8 +137,14 @@ export interface FileRoutesByTo {
   "/register": typeof RegisterRoute
   "/search": typeof SearchRoute
   "/verify-email": typeof VerifyEmailRoute
-  "/profile/$username": typeof ProfileUsernameRouteWithChildren
-  "/profile/$username/repositories": typeof ProfileUsernameRepositoriesRoute
+  "/a/$username": typeof AUsernameRouteWithChildren
+  "/a/$username/installer": typeof AUsernameInstallerRouteWithChildren
+  "/a/$username/profile": typeof AUsernameProfileRouteWithChildren
+  "/a/$username/repository": typeof AUsernameRepositoryRouteWithChildren
+  "/a/$username/installer/$installer": typeof AUsernameInstallerInstallerRoute
+  "/a/$username/profile/$profile": typeof AUsernameProfileProfileRouteWithChildren
+  "/a/$username/repository/$repository": typeof AUsernameRepositoryRepositoryRoute
+  "/a/$username/profile/$profile/edit": typeof AUsernameProfileProfileEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -106,8 +156,14 @@ export interface FileRoutesById {
   "/register": typeof RegisterRoute
   "/search": typeof SearchRoute
   "/verify-email": typeof VerifyEmailRoute
-  "/profile/$username": typeof ProfileUsernameRouteWithChildren
-  "/profile/$username/repositories": typeof ProfileUsernameRepositoriesRoute
+  "/a/$username": typeof AUsernameRouteWithChildren
+  "/a/$username/installer": typeof AUsernameInstallerRouteWithChildren
+  "/a/$username/profile": typeof AUsernameProfileRouteWithChildren
+  "/a/$username/repository": typeof AUsernameRepositoryRouteWithChildren
+  "/a/$username/installer/$installer": typeof AUsernameInstallerInstallerRoute
+  "/a/$username/profile/$profile": typeof AUsernameProfileProfileRouteWithChildren
+  "/a/$username/repository/$repository": typeof AUsernameRepositoryRepositoryRoute
+  "/a/$username/profile/$profile/edit": typeof AUsernameProfileProfileEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -120,8 +176,14 @@ export interface FileRouteTypes {
     | "/register"
     | "/search"
     | "/verify-email"
-    | "/profile/$username"
-    | "/profile/$username/repositories"
+    | "/a/$username"
+    | "/a/$username/installer"
+    | "/a/$username/profile"
+    | "/a/$username/repository"
+    | "/a/$username/installer/$installer"
+    | "/a/$username/profile/$profile"
+    | "/a/$username/repository/$repository"
+    | "/a/$username/profile/$profile/edit"
   fileRoutesByTo: FileRoutesByTo
   to:
     | "/"
@@ -132,8 +194,14 @@ export interface FileRouteTypes {
     | "/register"
     | "/search"
     | "/verify-email"
-    | "/profile/$username"
-    | "/profile/$username/repositories"
+    | "/a/$username"
+    | "/a/$username/installer"
+    | "/a/$username/profile"
+    | "/a/$username/repository"
+    | "/a/$username/installer/$installer"
+    | "/a/$username/profile/$profile"
+    | "/a/$username/repository/$repository"
+    | "/a/$username/profile/$profile/edit"
   id:
     | "__root__"
     | "/"
@@ -144,8 +212,14 @@ export interface FileRouteTypes {
     | "/register"
     | "/search"
     | "/verify-email"
-    | "/profile/$username"
-    | "/profile/$username/repositories"
+    | "/a/$username"
+    | "/a/$username/installer"
+    | "/a/$username/profile"
+    | "/a/$username/repository"
+    | "/a/$username/installer/$installer"
+    | "/a/$username/profile/$profile"
+    | "/a/$username/repository/$repository"
+    | "/a/$username/profile/$profile/edit"
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -157,7 +231,7 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   SearchRoute: typeof SearchRoute
   VerifyEmailRoute: typeof VerifyEmailRoute
-  ProfileUsernameRoute: typeof ProfileUsernameRouteWithChildren
+  AUsernameRoute: typeof AUsernameRouteWithChildren
 }
 
 declare module "@tanstack/react-router" {
@@ -218,33 +292,126 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/profile/$username": {
-      id: "/profile/$username"
-      path: "/profile/$username"
-      fullPath: "/profile/$username"
-      preLoaderRoute: typeof ProfileUsernameRouteImport
+    "/a/$username": {
+      id: "/a/$username"
+      path: "/a/$username"
+      fullPath: "/a/$username"
+      preLoaderRoute: typeof AUsernameRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/profile/$username/repositories": {
-      id: "/profile/$username/repositories"
-      path: "/repositories"
-      fullPath: "/profile/$username/repositories"
-      preLoaderRoute: typeof ProfileUsernameRepositoriesRouteImport
-      parentRoute: typeof ProfileUsernameRoute
+    "/a/$username/repository": {
+      id: "/a/$username/repository"
+      path: "/repository"
+      fullPath: "/a/$username/repository"
+      preLoaderRoute: typeof AUsernameRepositoryRouteImport
+      parentRoute: typeof AUsernameRoute
+    }
+    "/a/$username/profile": {
+      id: "/a/$username/profile"
+      path: "/profile"
+      fullPath: "/a/$username/profile"
+      preLoaderRoute: typeof AUsernameProfileRouteImport
+      parentRoute: typeof AUsernameRoute
+    }
+    "/a/$username/installer": {
+      id: "/a/$username/installer"
+      path: "/installer"
+      fullPath: "/a/$username/installer"
+      preLoaderRoute: typeof AUsernameInstallerRouteImport
+      parentRoute: typeof AUsernameRoute
+    }
+    "/a/$username/repository/$repository": {
+      id: "/a/$username/repository/$repository"
+      path: "/$repository"
+      fullPath: "/a/$username/repository/$repository"
+      preLoaderRoute: typeof AUsernameRepositoryRepositoryRouteImport
+      parentRoute: typeof AUsernameRepositoryRoute
+    }
+    "/a/$username/profile/$profile": {
+      id: "/a/$username/profile/$profile"
+      path: "/$profile"
+      fullPath: "/a/$username/profile/$profile"
+      preLoaderRoute: typeof AUsernameProfileProfileRouteImport
+      parentRoute: typeof AUsernameProfileRoute
+    }
+    "/a/$username/installer/$installer": {
+      id: "/a/$username/installer/$installer"
+      path: "/$installer"
+      fullPath: "/a/$username/installer/$installer"
+      preLoaderRoute: typeof AUsernameInstallerInstallerRouteImport
+      parentRoute: typeof AUsernameInstallerRoute
+    }
+    "/a/$username/profile/$profile/edit": {
+      id: "/a/$username/profile/$profile/edit"
+      path: "/edit"
+      fullPath: "/a/$username/profile/$profile/edit"
+      preLoaderRoute: typeof AUsernameProfileProfileEditRouteImport
+      parentRoute: typeof AUsernameProfileProfileRoute
     }
   }
 }
 
-interface ProfileUsernameRouteChildren {
-  ProfileUsernameRepositoriesRoute: typeof ProfileUsernameRepositoriesRoute
+interface AUsernameInstallerRouteChildren {
+  AUsernameInstallerInstallerRoute: typeof AUsernameInstallerInstallerRoute
 }
 
-const ProfileUsernameRouteChildren: ProfileUsernameRouteChildren = {
-  ProfileUsernameRepositoriesRoute: ProfileUsernameRepositoriesRoute,
+const AUsernameInstallerRouteChildren: AUsernameInstallerRouteChildren = {
+  AUsernameInstallerInstallerRoute: AUsernameInstallerInstallerRoute,
 }
 
-const ProfileUsernameRouteWithChildren = ProfileUsernameRoute._addFileChildren(
-  ProfileUsernameRouteChildren,
+const AUsernameInstallerRouteWithChildren =
+  AUsernameInstallerRoute._addFileChildren(AUsernameInstallerRouteChildren)
+
+interface AUsernameProfileProfileRouteChildren {
+  AUsernameProfileProfileEditRoute: typeof AUsernameProfileProfileEditRoute
+}
+
+const AUsernameProfileProfileRouteChildren: AUsernameProfileProfileRouteChildren =
+  {
+    AUsernameProfileProfileEditRoute: AUsernameProfileProfileEditRoute,
+  }
+
+const AUsernameProfileProfileRouteWithChildren =
+  AUsernameProfileProfileRoute._addFileChildren(
+    AUsernameProfileProfileRouteChildren,
+  )
+
+interface AUsernameProfileRouteChildren {
+  AUsernameProfileProfileRoute: typeof AUsernameProfileProfileRouteWithChildren
+}
+
+const AUsernameProfileRouteChildren: AUsernameProfileRouteChildren = {
+  AUsernameProfileProfileRoute: AUsernameProfileProfileRouteWithChildren,
+}
+
+const AUsernameProfileRouteWithChildren =
+  AUsernameProfileRoute._addFileChildren(AUsernameProfileRouteChildren)
+
+interface AUsernameRepositoryRouteChildren {
+  AUsernameRepositoryRepositoryRoute: typeof AUsernameRepositoryRepositoryRoute
+}
+
+const AUsernameRepositoryRouteChildren: AUsernameRepositoryRouteChildren = {
+  AUsernameRepositoryRepositoryRoute: AUsernameRepositoryRepositoryRoute,
+}
+
+const AUsernameRepositoryRouteWithChildren =
+  AUsernameRepositoryRoute._addFileChildren(AUsernameRepositoryRouteChildren)
+
+interface AUsernameRouteChildren {
+  AUsernameInstallerRoute: typeof AUsernameInstallerRouteWithChildren
+  AUsernameProfileRoute: typeof AUsernameProfileRouteWithChildren
+  AUsernameRepositoryRoute: typeof AUsernameRepositoryRouteWithChildren
+}
+
+const AUsernameRouteChildren: AUsernameRouteChildren = {
+  AUsernameInstallerRoute: AUsernameInstallerRouteWithChildren,
+  AUsernameProfileRoute: AUsernameProfileRouteWithChildren,
+  AUsernameRepositoryRoute: AUsernameRepositoryRouteWithChildren,
+}
+
+const AUsernameRouteWithChildren = AUsernameRoute._addFileChildren(
+  AUsernameRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
@@ -256,7 +423,7 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   SearchRoute: SearchRoute,
   VerifyEmailRoute: VerifyEmailRoute,
-  ProfileUsernameRoute: ProfileUsernameRouteWithChildren,
+  AUsernameRoute: AUsernameRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
